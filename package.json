@@ -1,0 +1,40 @@
+{
+  "name": "graphiend",
+  "version": "0.0.1",
+  "description": "A starting point for Node.js express apps with TypeScript",
+  "author": "Tristan Siegel",
+  "license": "MIT",
+  "engines": {
+    "node": ">=6"
+  },
+  "scripts": {
+    "build": "yarn run build-ts && yarn run tslint",
+    "clean": "rm -rf dist/*",
+    "test": "yarn build-ts && jest --runInBand --forceExit --coverage --verbose",
+    "build-ts": "tsc",
+    "tslint": "tslint -c tslint.json -p tsconfig.json"
+  },
+  "dependencies": {
+    "@types/bluebird-global": "^3.5.3",
+    "bluebird": "^3.5.1",
+    "bluestream": "/Users/tristan/code/bluestream",
+    "dataloader": "^1.3.0",
+    "invariant": "^2.2.4",
+    "ioredis": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/async": "^2.0.45",
+    "@types/errorhandler": "0.0.32",
+    "@types/ioredis": "^3.2.5",
+    "@types/jest": "^21.1.8",
+    "@types/node": "^7.0.50",
+    "chai": "^4.1.2",
+    "concurrently": "^3.5.1",
+    "jest": "^21.2.1",
+    "supertest": "^3.0.0",
+    "ts-jest": "^21.2.4",
+    "ts-node": "^4.0.2",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.2"
+  }
+}
