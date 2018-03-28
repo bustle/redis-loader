@@ -1,0 +1,35 @@
+{
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "standard",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:jest/recommended"
+  ],
+  "plugins": [
+    "jest"
+  ],
+  "rules": {
+    "standard/array-bracket-even-spacing": 0,
+    "standard/computed-property-even-spacing": 0,
+    "standard/object-curly-even-spacing": 0,
+    "curly": [
+      "error",
+      "all"
+    ],
+    "no-console": "error",
+    "no-var": "error",
+    "import/no-duplicates": 2,
+    "import/no-unresolved": 2,
+    "import/namespace": [
+      2,
+      {
+        "allowComputed": true
+      }
+    ],
+    "no-return-await": "error",
+    "space-before-function-paren": 0
+  }
+}
