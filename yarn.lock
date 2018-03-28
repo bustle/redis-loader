@@ -3,18 +3,18 @@
 
 
 "@types/async@^2.0.45":
-  version "2.0.47"
-  resolved "https://registry.yarnpkg.com/@types/async/-/async-2.0.47.tgz#f49ba1dd1f189486beb6e1d070a850f6ab4bd521"
+  version "2.0.48"
+  resolved "https://registry.yarnpkg.com/@types/async/-/async-2.0.48.tgz#97436de4c84163b04f678066b3f77b01e58deb7a"
 
 "@types/bluebird-global@^3.5.3":
-  version "3.5.3"
-  resolved "https://registry.yarnpkg.com/@types/bluebird-global/-/bluebird-global-3.5.3.tgz#82e5b7e083873d55dd46ff93c9b06607cf2ace0f"
+  version "3.5.5"
+  resolved "https://registry.yarnpkg.com/@types/bluebird-global/-/bluebird-global-3.5.5.tgz#b3bd9dc0a020c8ee74cebd2c460249e5629a89ef"
   dependencies:
     "@types/bluebird" "*"
 
 "@types/bluebird@*":
-  version "3.5.19"
-  resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.19.tgz#1a47308819ac2d1d6d1ca4f5d800ac84924100de"
+  version "3.5.20"
+  resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.20.tgz#f6363172add6f4eabb8cada53ca9af2781e8d6a1"
 
 "@types/body-parser@*":
   version "1.16.8"
@@ -29,23 +29,28 @@
   dependencies:
     "@types/express" "*"
 
+"@types/events@*":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@types/events/-/events-1.2.0.tgz#81a6731ce4df43619e5c8c945383b3e62a89ea86"
+
 "@types/express-serve-static-core@*":
-  version "4.11.0"
-  resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.11.0.tgz#aaaf472777191c3e56ec7aa160034c6b55ebdd59"
+  version "4.11.1"
+  resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.11.1.tgz#f6f7212382d59b19d696677bcaa48a37280f5d45"
   dependencies:
+    "@types/events" "*"
     "@types/node" "*"
 
 "@types/express@*":
-  version "4.11.0"
-  resolved "https://registry.yarnpkg.com/@types/express/-/express-4.11.0.tgz#234d65280af917cb290634b7a8d6bcac24aecbad"
+  version "4.11.1"
+  resolved "https://registry.yarnpkg.com/@types/express/-/express-4.11.1.tgz#f99663b3ab32d04cb11db612ef5dd7933f75465b"
   dependencies:
     "@types/body-parser" "*"
     "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
 
 "@types/ioredis@^3.2.5":
-  version "3.2.5"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-3.2.5.tgz#81889bed41ccaf175a46fb788ab7eee688bab1c6"
+  version "3.2.7"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-3.2.7.tgz#1a1b4248ef0f86dacfb67c4108acf590bcb170b3"
   dependencies:
     "@types/bluebird" "*"
     "@types/node" "*"
@@ -59,12 +64,12 @@
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-2.0.0.tgz#5a7306e367c539b9f6543499de8dd519fac37a8b"
 
 "@types/node@*":
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-9.3.0.tgz#3a129cda7c4e5df2409702626892cb4b96546dd5"
+  version "9.6.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-9.6.0.tgz#d3480ee666df9784b1001a1872a2f6ccefb6c2d7"
 
 "@types/node@^7.0.50":
-  version "7.0.52"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.52.tgz#8990d3350375542b0c21a83cd0331e6a8fc86716"
+  version "7.0.57"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.57.tgz#eed149b2c75cdbd7b9823c3fd64ecddbdc68ed9c"
 
 "@types/serve-static@*":
   version "1.13.1"

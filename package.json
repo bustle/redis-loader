@@ -8,11 +8,9 @@
     "node": ">=6"
   },
   "scripts": {
-    "build": "yarn run build-ts && yarn run tslint",
+    "build": "tsc",
     "clean": "rm -rf dist/*",
-    "test": "yarn build-ts && jest --runInBand --forceExit --coverage --verbose",
-    "build-ts": "tsc",
-    "tslint": "tslint -c tslint.json -p tsconfig.json"
+    "test": "yarn build && jest --runInBand --forceExit --coverage --verbose"
   },
   "dependencies": {
     "@types/bluebird-global": "^3.5.3",
