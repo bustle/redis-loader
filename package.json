@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist/*",
-    "test": "yarn build && jest --runInBand --forceExit --coverage --verbose"
+    "test": "jest --runInBand --forceExit --bail --coverage --verbose"
   },
   "dependencies": {
     "@types/bluebird-global": "^3.5.3",

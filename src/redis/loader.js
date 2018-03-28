@@ -1,5 +1,5 @@
-import DataLoader from 'dataloader'
-import invariant from 'invariant'
+import * as DataLoader from 'dataloader'
+import * as invariant from 'invariant'
 
 import { ReadStream } from 'bluestream'
 

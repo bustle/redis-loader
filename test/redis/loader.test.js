@@ -1,15 +1,12 @@
-import { redisLoader, cleanup } from "../helpers/redis"
+import { redisLoader, cleanup } from '../helpers/redis'
 
-describe("Redis - Loader", async () => {
+describe('Redis - Loader', async () => {
   beforeEach(async () => {
-    redisLoader.resetStats()
     await cleanup()
+    redisLoader.resetStats()
   })
 
-  it("can batch commands to Redis", async () => {
-    console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`)
-    console.log(redisLoader)
-    console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`)
+  it('can batch commands to Redis', async () => {
     await Promise.join(
       redisLoader.ping(),
       redisLoader.dbsize(),
@@ -18,10 +15,10 @@ describe("Redis - Loader", async () => {
     const { tripCountTotal, commandCountTotal, timeInRedis } = redisLoader.stats()
     expect(commandCountTotal).toBe(3)
     expect(tripCountTotal).toBe(1)
-    expect(timeInRedis).toBeGreaterThan(1)
+    expect(timeInRedis).toBeGreaterThan(0)
   })
 
-  it("can reset batch command counts", async () => {
+  it('can reset batch command counts', async () => {
     await Promise.join(
       redisLoader.ping(),
       redisLoader.dbsize(),
@@ -34,8 +31,8 @@ describe("Redis - Loader", async () => {
     expect(timeInRedis).toBe(0)
   })
 
-  describe("Buffers", async () => {
-    it("can batch buffer commands to redis", async () => {
+  describe('Buffers', async () => {
+    it('can batch buffer commands to redis', async () => {
       const results = await Promise.join(
         redisLoader.pingBuffer(),
         redisLoader.dbsizeBuffer(),
