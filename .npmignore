@@ -1,0 +1,7 @@
+src
+test
+*.log
+index.js
+.eslintrc
+tsconfig.json
+jest.config.js
