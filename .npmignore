@@ -1,0 +1,8 @@
+src
+test
+*.log
+*.lock
+index.js
+.eslintrc
+tsconfig.json
+jest.config.js

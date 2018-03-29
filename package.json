@@ -7,9 +7,11 @@
   "engines": {
     "node": ">=6"
   },
+  "main": "dist",
   "scripts": {
-    "build": "tsc",
     "clean": "rm -rf dist/*",
+    "build": "yarn clean && tsc",
+    "prepublish": "yarn build",
     "lint": "eslint ./ --ignore-path .gitignore",
     "test": "jest --runInBand --forceExit --bail --coverage --verbose"
   },

@@ -20,6 +20,7 @@ export default class RedisLoader {
           this._tripCountTotal++
           this._commandCountTotal += commands.length
           this._timeInRedis += elapsed
+          this._elapsed = elapsed
           logger(null, this.stats())
         }
 
@@ -73,18 +74,20 @@ export default class RedisLoader {
   }
 
   stats() {
-    const { _tripCountTotal: tripCountTotal, _commandCountTotal: commandCountTotal, _timeInRedis: timeInRedis } = this
+    const { _tripCountTotal: tripCountTotal, _commandCountTotal: commandCountTotal, _timeInRedis: timeInRedis, _elapsed: elapsed } = this
     return {
       tripCountTotal,
       commandCountTotal,
-      timeInRedis
+      timeInRedis,
+      elapsed
     }
   }
 
-  resetStats({ tripCountTotal = 0, commandCountTotal = 0, timeInRedis = 0 } = {}) {
+  resetStats({ tripCountTotal = 0, commandCountTotal = 0, timeInRedis = 0, elapsed } = {}) {
     this._tripCountTotal = tripCountTotal
     this._commandCountTotal = commandCountTotal
     this._timeInRedis = timeInRedis
+    this._elapsed = elapsed
   }
 }
 
