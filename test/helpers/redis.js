@@ -1,16 +1,14 @@
-import RedisLoader from '../../src/redis/loader'
-import connector from '../../src/redis/connector'
+import redisLoader from '../../index'
 
-const keyPrefix = '_test_'
+export const keyPrefix = '_test_'
+export const redisUrl = 'redis://localhost:6379/8'
 
-const redis = connector({ redisURL: 'redis://localhost:6379/8', keyPrefix })
-
-export const redisLoader = new RedisLoader({ redis })
+export const redis = redisLoader(redisUrl, { keyPrefix })
 
 export async function cleanup() {
-  const keys = await redisLoader.keys(keyPrefix + '*')
+  const keys = await redis.keys(keyPrefix + '*')
 
   if (keys.length !== 0) {
-    await redisLoader.del(...keys.map(key => key.replace(keyPrefix, '*')))
+    await redis.del(...keys.map(key => key.replace(keyPrefix, '*')))
   }
 }

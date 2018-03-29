@@ -10,6 +10,7 @@
         ],
     },
     "include": [
-        "src/**/*.js"
+        "index.js",
+        "src/redis-loader.js"
     ]
 }
