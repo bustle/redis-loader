@@ -1,7 +1,7 @@
 {
   "name": "graphiend",
   "version": "0.0.1",
-  "description": "A starting point for Node.js express apps with TypeScript",
+  "description": "A redis loader based ",
   "author": "Tristan Siegel",
   "license": "MIT",
   "engines": {
@@ -28,7 +28,6 @@
     "@types/jest": "^21.1.8",
     "@types/node": "^7.0.50",
     "chai": "^4.1.2",
-    "concurrently": "^3.5.1",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.9.0",
@@ -37,7 +36,6 @@
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.0.1",
     "jest": "^21.2.1",
-    "supertest": "^3.0.0",
     "ts-jest": "^21.2.4",
     "ts-node": "^4.0.2",
     "tslint": "^5.8.0",
