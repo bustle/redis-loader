@@ -69,7 +69,7 @@ describe('Redis - Loader', async () => {
         redisLoader.pingBuffer()
       )
       results.forEach(result => {
-        expect(Buffer.isBuffer(result)).toBeTruthy(),
+        expect(Buffer.isBuffer(result)).toBeTruthy()
         expect(result.toString()).toEqual('PONG')
       })
     })

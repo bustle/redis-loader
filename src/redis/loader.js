@@ -15,7 +15,6 @@ export default class RedisLoader {
         const start = Date.now()
 
         const log = () => {
-          const commandCount = commands.length
           const end = Date.now()
           const elapsed = end - start
           this._tripCountTotal++
