@@ -1,3 +1,4 @@
+import { collect } from 'bluestream'
 import { redisLoader, cleanup } from '../helpers/redis'
 
 describe('Redis - Loader', async () => {
@@ -13,8 +14,8 @@ describe('Redis - Loader', async () => {
       redisLoader.time()
     )
     const { tripCountTotal, commandCountTotal, timeInRedis } = redisLoader.stats()
-    expect(commandCountTotal).toBe(3)
-    expect(tripCountTotal).toBe(1)
+    expect(commandCountTotal).toEqual(3)
+    expect(tripCountTotal).toEqual(1)
     expect(timeInRedis).toBeGreaterThan(0)
   })
 
@@ -26,19 +27,33 @@ describe('Redis - Loader', async () => {
     )
     redisLoader.resetStats()
     const { tripCountTotal, commandCountTotal, timeInRedis } = redisLoader.stats()
-    expect(commandCountTotal).toBe(0)
-    expect(tripCountTotal).toBe(0)
-    expect(timeInRedis).toBe(0)
+    expect(commandCountTotal).toEqual(0)
+    expect(tripCountTotal).toEqual(0)
+    expect(timeInRedis).toEqual(0)
   })
 
   describe('Buffers', async () => {
     it('can batch buffer commands to redis', async () => {
       const results = await Promise.join(
         redisLoader.pingBuffer(),
-        redisLoader.dbsizeBuffer(),
-        redisLoader.timeBuffer()
+        redisLoader.pingBuffer(),
+        redisLoader.pingBuffer()
       )
-      console.log(results)
+      results.forEach(result => {
+        expect(Buffer.isBuffer(result)).toBeTruthy(),
+        expect(result.toString()).toEqual('PONG')
+      })
+    })
+  })
+
+  describe('Streams', async () => {
+    it('can handle streams', async () => {
+      await Promise.join(
+        redisLoader.zadd('foo', 0, 'abc'),
+        redisLoader.zadd('foo', 0, 'def'),
+        redisLoader.zadd('foo', 0, 'ghi')
+      )
+      expect(await collect(redisLoader.zscanStream('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
     })
   })
 })
