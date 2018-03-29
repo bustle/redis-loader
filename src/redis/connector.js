@@ -1,7 +1,7 @@
 import * as Redis from 'ioredis'
 import { parse as urlParse } from 'url'
 
-export default function connectRedis({ redisURL, sentinels, keyPrefix = '', showFriendlyErrorStack = false } = {}) {
+export default function connectRedis({ redisURL, sentinels, keyPrefix = '', showFriendlyErrorStack = false, logger = () => {} } = {}) {
   let redis
   if (!sentinels) {
     redis = new Redis(redisURL, { showFriendlyErrorStack, keyPrefix })
@@ -15,9 +15,7 @@ export default function connectRedis({ redisURL, sentinels, keyPrefix = '', show
     })
   }
 
-  redis.on('error', (err) => {
-    console.log(err)
-  })
+  redis.on('error', err => logger(err))
 
   return redis
 }

@@ -1,5 +1,7 @@
 import { collect } from 'bluestream'
 import { redisLoader, cleanup } from '../helpers/redis'
+import connector from '../../src/redis/connector'
+import RedisLoader from '../../src/redis/loader'
 
 describe('Redis - Loader', async () => {
   beforeEach(async () => {
@@ -30,6 +32,33 @@ describe('Redis - Loader', async () => {
     expect(commandCountTotal).toEqual(0)
     expect(tripCountTotal).toEqual(0)
     expect(timeInRedis).toEqual(0)
+  })
+
+  describe('Logging', async () => {
+    it('logs data when commands are batched', async () => {
+      function logger (_, { tripCountTotal, commandCountTotal, timeInRedis }) {
+        expect(commandCountTotal).toEqual(3)
+        expect(tripCountTotal).toEqual(1)
+        expect(timeInRedis).toBeGreaterThan(0)
+      }
+      const redis = connector({ redisURL: 'redis://localhost:6379/8', keyPrefix: '_test_' })
+      const redisLoader = new RedisLoader({ redis, logger })
+      await Promise.join(
+        redisLoader.ping(),
+        redisLoader.dbsize(),
+        redisLoader.time()
+      )
+    })
+    it('logs errors in the loader', async () => {
+      function logger (err) {
+        expect(err).toBeInstanceOf(Error)
+      }
+      const redis = connector({ redisURL: 'redis://localhost:6379/8', keyPrefix: '_test_' })
+      const redisLoader = new RedisLoader({ redis, logger })
+      try {
+        await redisLoader.zadd('foo')
+      } catch (e) {}
+    })
   })
 
   describe('Buffers', async () => {

@@ -4,7 +4,7 @@ import * as invariant from 'invariant'
 import { ReadStream } from 'bluestream'
 
 export default class RedisLoader {
-  constructor({ redis }) {
+  constructor({ redis, logger = () => {} }) {
     invariant(redis, '"redis" is required')
     this._redis = redis
     this._tripCountTotal = 0
@@ -21,21 +21,24 @@ export default class RedisLoader {
           this._tripCountTotal++
           this._commandCountTotal += commands.length
           this._timeInRedis += elapsed
+          logger(null, this.stats())
         }
 
         let results
         try {
           results = await redis.multi(commands).exec()
-        } catch (error) {
+        } catch (err) {
           log()
-          if (Array.isArray(error.previousErrors)) {
-            error.message = `${error.message} ${error.previousErrors.map(e => e && e.message)}`
+          if (Array.isArray(err.previousErrors)) {
+            err.message = `${err.message} ${err.previousErrors.map(e => e && e.message)}`
           }
-          throw error
+          logger(err, this.stats())
+          throw err
         }
         log()
         return results.map(([err, data]) => {
           if (err) {
+            logger(err, this.stats())
             throw err
           }
           return data
