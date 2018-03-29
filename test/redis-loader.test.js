@@ -1,6 +1,6 @@
 import { collect } from 'bluestream'
-import { redis, cleanup, redisUrl, keyPrefix } from './helpers/redis'
-import redisLoader from '../index'
+import redisLoader from '../src/index'
+import { redis, cleanup, redisUrl, keyPrefix } from './helper'
 
 describe('Redis - Loader', async () => {
   beforeEach(async () => {
