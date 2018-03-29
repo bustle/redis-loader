@@ -14,10 +14,11 @@ describe('Redis - Loader', async () => {
       redis.dbsize(),
       redis.time()
     )
-    const { tripCountTotal, commandCountTotal, timeInRedis } = redis.stats()
+    const { tripCountTotal, commandCountTotal, timeInRedis, elapsed } = redis.stats()
     expect(commandCountTotal).toEqual(3)
     expect(tripCountTotal).toEqual(1)
-    expect(timeInRedis).toBeGreaterThan(0)
+    expect(timeInRedis).toBeGreaterThanOrEqual(0)
+    expect(elapsed).toBeGreaterThanOrEqual(0)
   })
 
   it('can reset batch command counts', async () => {
@@ -27,18 +28,20 @@ describe('Redis - Loader', async () => {
       redis.time()
     )
     redis.resetStats()
-    const { tripCountTotal, commandCountTotal, timeInRedis } = redis.stats()
+    const { tripCountTotal, commandCountTotal, timeInRedis, elapsed } = redis.stats()
     expect(commandCountTotal).toEqual(0)
     expect(tripCountTotal).toEqual(0)
     expect(timeInRedis).toEqual(0)
+    expect(elapsed).toEqual(undefined)
   })
 
   describe('Logging', async () => {
     it('logs data when commands are batched', async () => {
-      function logger (_, { tripCountTotal, commandCountTotal, timeInRedis }) {
+      function logger (_, { tripCountTotal, commandCountTotal, timeInRedis, elapsed }) {
         expect(commandCountTotal).toEqual(3)
         expect(tripCountTotal).toEqual(1)
-        expect(timeInRedis).toBeGreaterThan(0)
+        expect(timeInRedis).toBeGreaterThanOrEqual(0)
+        expect(elapsed).toBeGreaterThanOrEqual(0)
       }
       const redis = redisLoader(redisUrl, { keyPrefix, logger })
       await Promise.join(
