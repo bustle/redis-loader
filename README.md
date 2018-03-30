@@ -1,12 +1,12 @@
 # RedisLoader
 An [`ioredis`](https://github.com/luin/ioredis) like object that batches commands via [`dataloader`](https://github.com/facebook/dataloader). Under the hood we have `dataloader` utilize redis's `multi` transactions to group commands called. We also support batching in streams, using [`bluestream`](https://github.com/bustle/bluestream) to make sure promises/async functions play nice in them.
 
-##Installation
+### Installation
 ```
 npm i --save redis-loader
 ```
 
-##Examples
+### Examples
 ```js
 // set up like you would
 const redis = redisLoader('redis://localhost:6379/1', { keyPrefix: 'foo', logger: console.log })
