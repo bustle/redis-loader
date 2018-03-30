@@ -8,8 +8,12 @@ npm i --save redis-loader
 
 ### Examples
 ```js
-// set up like you would
-const redis = redisLoader('redis://localhost:6379/1', { keyPrefix: 'foo', logger: console.log })
+// RedisLoader supports an optional logger function that takes node style callbacks
+function logger (err, { tripCountTotal, commandCountTotal, timeInRedis, elapsed }) {
+  //...
+}
+// set up like you would `ioredis`
+const redis = redisLoader('redis://localhost:6379/1', { keyPrefix: 'foo', logger })
 // three commands sent to redis together
 await Promise.join(
   redis.ping(),
