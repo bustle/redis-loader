@@ -85,4 +85,16 @@ describe('Redis - Loader', async () => {
       expect(await collect(redis.zscanStream('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
     })
   })
+
+  describe('PubSub', async () => {
+    it('can handle subscription', async () => {
+      redis.on('message', (channel, message) => {
+        expect(channel).toEqual('foo')
+        expect(message).toEqual('bar')
+      })
+      expect(await redis.subscribe('foo')).toEqual(1)
+      const pub = redisLoader(redisUrl, { keyPrefix })
+      await pub.publish('foo', 'bar')
+    })
+  })
 })

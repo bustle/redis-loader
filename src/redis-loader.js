@@ -1,7 +1,9 @@
 import * as DataLoader from 'dataloader'
 import * as invariant from 'invariant'
-
 import { ReadStream } from 'bluestream'
+
+const scanCommands = ['scan', 'sscan', 'hscan', 'zscan', 'scanBuffer', 'sscanBuffer', 'hscanBuffer', 'zscanBuffer']
+const pubSubCommands = ['subscribe', 'unsubscribe', 'publish', 'psubscribe', 'punsubscribe']
 
 export default class RedisLoader {
   constructor({ redis, logger = () => {} }) {
@@ -56,9 +58,8 @@ export default class RedisLoader {
       }
     })
 
-    const scanCommands = ['scan', 'sscan', 'hscan', 'zscan', 'scanBuffer', 'sscanBuffer', 'hscanBuffer', 'zscanBuffer']
     scanCommands.forEach(command => {
-      this[command + 'Stream'] = (key, options) => {
+      this[`${command}Stream`] = (key, options) => {
         if (command === 'scan' || command === 'scanBuffer') {
           options = key
           key = null
@@ -71,6 +72,13 @@ export default class RedisLoader {
         })
       }
     })
+
+    pubSubCommands.forEach(command => {
+      this[command] = (...args) => this._redis[command](...args)
+      this[`${command}Buffer`] = (...args) => this._redis[`${command}Buffer`](...args)
+    })
+
+    this.on = (...args) => this._redis.on(...args)
   }
 
   stats() {
