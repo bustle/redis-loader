@@ -9,7 +9,7 @@ npm i --save redis-loader
 ### Examples
 ```js
 // RedisLoader supports an optional logger function that takes node style callbacks
-function logger (err, { tripCountTotal, commandCountTotal, timeInRedis, elapsed }) {
+function logger (err, { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal }) {
   //...
 }
 // set up like you would `ioredis`
