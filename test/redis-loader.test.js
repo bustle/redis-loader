@@ -14,7 +14,7 @@ describe('Redis - Loader', async () => {
       redis.dbsize(),
       redis.time()
     )
-    const { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal } = redis.stats()
+    const { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal } = redis.stats
     expect(commandCount).toEqual(3)
     expect(commandCountTotal).toEqual(3)
     expect(tripCountTotal).toEqual(1)
@@ -29,7 +29,7 @@ describe('Redis - Loader', async () => {
       redis.time()
     )
     redis.resetStats()
-    const { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal } = redis.stats()
+    const { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal } = redis.stats
     expect(commandCount).toEqual(undefined)
     expect(commandCountTotal).toEqual(0)
     expect(tripCountTotal).toEqual(0)
@@ -85,7 +85,10 @@ describe('Redis - Loader', async () => {
         redis.zadd('foo', 0, 'def'),
         redis.zadd('foo', 0, 'ghi')
       )
+      redis.resetStats()
       expect(await collect(redis.zscanStream('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
+      const { tripCountTotal } = redis.stats
+      expect(tripCountTotal).toEqual(1)
     })
   })
 

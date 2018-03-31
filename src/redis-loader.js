@@ -26,7 +26,7 @@ export default class RedisLoader {
           this._commandCountTotal += commands.length
           this._timeInRedis = timeInRedis
           this._timeInRedisTotal += timeInRedis
-          logger(null, this.stats())
+          logger(null, this.stats)
         }
 
         let results
@@ -37,13 +37,13 @@ export default class RedisLoader {
           if (Array.isArray(err.previousErrors)) {
             err.message = `${err.message} ${err.previousErrors.map(e => e && e.message)}`
           }
-          logger(err, this.stats())
+          logger(err, this.stats)
           throw err
         }
         log()
         return results.map(([err, data]) => {
           if (err) {
-            logger(err, this.stats())
+            logger(err, this.stats)
             throw err
           }
           return data
@@ -84,7 +84,7 @@ export default class RedisLoader {
     this.on = (...args) => this._redis.on(...args)
   }
 
-  stats() {
+  get stats() {
     const {
       _tripCountTotal: tripCountTotal,
       _commandCount: commandCount,
