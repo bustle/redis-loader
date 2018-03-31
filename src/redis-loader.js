@@ -10,19 +10,22 @@ export default class RedisLoader {
     invariant(redis, '"redis" is required')
     this._redis = redis
     this._tripCountTotal = 0
+    this._commandCount = undefined
     this._commandCountTotal = 0
-    this._timeInRedis = 0
+    this._timeInRedis = undefined
+    this._timeInRedisTotal = 0
     this._dataLoader = new DataLoader(
       async commands => {
         const start = Date.now()
 
         const log = () => {
           const end = Date.now()
-          const elapsed = end - start
+          const timeInRedis = end - start
           this._tripCountTotal++
+          this._commandCount = commands.length
           this._commandCountTotal += commands.length
-          this._timeInRedis += elapsed
-          this._elapsed = elapsed
+          this._timeInRedis = timeInRedis
+          this._timeInRedisTotal += timeInRedis
           logger(null, this.stats())
         }
 
@@ -82,20 +85,28 @@ export default class RedisLoader {
   }
 
   stats() {
-    const { _tripCountTotal: tripCountTotal, _commandCountTotal: commandCountTotal, _timeInRedis: timeInRedis, _elapsed: elapsed } = this
+    const {
+      _tripCountTotal: tripCountTotal,
+      _commandCount: commandCount,
+      _commandCountTotal: commandCountTotal,
+      _timeInRedis: timeInRedis,
+      _timeInRedisTotal: timeInRedisTotal
+    } = this
     return {
       tripCountTotal,
+      commandCount,
       commandCountTotal,
       timeInRedis,
-      elapsed
+      timeInRedisTotal
     }
   }
 
-  resetStats({ tripCountTotal = 0, commandCountTotal = 0, timeInRedis = 0, elapsed } = {}) {
+  resetStats({ tripCountTotal = 0, commandCount, commandCountTotal = 0, timeInRedis, timeInRedisTotal = 0 } = {}) {
     this._tripCountTotal = tripCountTotal
+    this._commandCount = commandCount
     this._commandCountTotal = commandCountTotal
     this._timeInRedis = timeInRedis
-    this._elapsed = elapsed
+    this._timeInRedisTotal = timeInRedisTotal
   }
 }
 
