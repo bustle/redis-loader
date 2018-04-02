@@ -14,11 +14,12 @@ describe('Redis - Loader', async () => {
       redis.dbsize(),
       redis.time()
     )
-    const { tripCountTotal, commandCountTotal, timeInRedis, elapsed } = redis.stats()
+    const { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal } = redis.stats
+    expect(commandCount).toEqual(3)
     expect(commandCountTotal).toEqual(3)
     expect(tripCountTotal).toEqual(1)
     expect(timeInRedis).toBeGreaterThanOrEqual(0)
-    expect(elapsed).toBeGreaterThanOrEqual(0)
+    expect(timeInRedisTotal).toBeGreaterThanOrEqual(0)
   })
 
   it('can reset batch command counts', async () => {
@@ -28,20 +29,22 @@ describe('Redis - Loader', async () => {
       redis.time()
     )
     redis.resetStats()
-    const { tripCountTotal, commandCountTotal, timeInRedis, elapsed } = redis.stats()
+    const { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal } = redis.stats
+    expect(commandCount).toEqual(undefined)
     expect(commandCountTotal).toEqual(0)
     expect(tripCountTotal).toEqual(0)
-    expect(timeInRedis).toEqual(0)
-    expect(elapsed).toEqual(undefined)
+    expect(timeInRedis).toEqual(undefined)
+    expect(timeInRedisTotal).toEqual(0)
   })
 
   describe('Logging', async () => {
     it('logs data when commands are batched', async () => {
-      function logger (_, { tripCountTotal, commandCountTotal, timeInRedis, elapsed }) {
+      function logger (_, { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal }) {
+        expect(commandCount).toEqual(3)
         expect(commandCountTotal).toEqual(3)
         expect(tripCountTotal).toEqual(1)
         expect(timeInRedis).toBeGreaterThanOrEqual(0)
-        expect(elapsed).toBeGreaterThanOrEqual(0)
+        expect(timeInRedisTotal).toBeGreaterThanOrEqual(0)
       }
       const redis = redisLoader(redisUrl, { keyPrefix, logger })
       await Promise.join(
@@ -69,7 +72,7 @@ describe('Redis - Loader', async () => {
         redis.pingBuffer()
       )
       results.forEach(result => {
-        expect(Buffer.isBuffer(result)).toBeTruthy()
+        expect(result).toBeInstanceOf(Buffer)
         expect(result.toString()).toEqual('PONG')
       })
     })
@@ -82,7 +85,26 @@ describe('Redis - Loader', async () => {
         redis.zadd('foo', 0, 'def'),
         redis.zadd('foo', 0, 'ghi')
       )
+      redis.resetStats()
       expect(await collect(redis.zscanStream('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
+      const { tripCountTotal } = redis.stats
+      expect(tripCountTotal).toEqual(1)
+    })
+  })
+
+  describe('PubSub', async () => {
+    it('can recieve messages', () => {
+      return new Promise(async resolve => {
+        redis.on('message', (channel, message) => {
+          expect(channel).toEqual('foo')
+          expect(message).toEqual('bar')
+          resolve()
+        })
+
+        expect(await redis.subscribe('foo')).toEqual(1)
+        const pub = redisLoader(redisUrl, { keyPrefix })
+        await pub.publish('foo', 'bar')
+      })
     })
   })
 })
