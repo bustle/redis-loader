@@ -93,8 +93,8 @@ describe('Redis - Loader', async () => {
   })
 
   describe('PubSub', async () => {
-    it('can recieve messages', async () => {
-      await new Promise(async resolve => {
+    it('can recieve messages', () => {
+      return new Promise(async resolve => {
         redis.on('message', (channel, message) => {
           expect(channel).toEqual('foo')
           expect(message).toEqual('bar')
