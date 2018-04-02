@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events'
 import * as DataLoader from 'dataloader'
 import * as invariant from 'invariant'
 import { ReadStream } from 'bluestream'
@@ -77,11 +78,17 @@ export default class RedisLoader {
     })
 
     pubSubCommands.forEach(command => {
-      this[command] = (...args) => this._redis[command](...args)
-      this[`${command}Buffer`] = (...args) => this._redis[`${command}Buffer`](...args)
+      this[command] = (...args) => redis[command](...args)
+      this[`${command}Buffer`] = (...args) => redis[`${command}Buffer`](...args)
     })
 
-    this.on = (...args) => this._redis.on(...args)
+    Object.keys(EventEmitter.prototype).forEach(key => {
+      if (typeof EventEmitter[key] === 'function') {
+        this[key] = (...args) => redis[key](...args)
+      } else {
+        Object.defineProperty(this, key, { value: redis[key], writable: false })
+      }
+    })
   }
 
   get stats() {
