@@ -83,7 +83,7 @@ export default class RedisLoader {
     })
 
     Object.keys(EventEmitter.prototype).forEach(key => {
-      if (typeof EventEmitter[key] === 'function') {
+      if (typeof EventEmitter.prototype[key] === 'function') {
         this[key] = (...args) => redis[key](...args)
       } else {
         Object.defineProperty(this, key, { value: redis[key], writable: false })

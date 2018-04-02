@@ -93,14 +93,18 @@ describe('Redis - Loader', async () => {
   })
 
   describe('PubSub', async () => {
-    it('can handle subscription', async () => {
-      redis.on('message', (channel, message) => {
-        expect(channel).toEqual('foo')
-        expect(message).toEqual('bar')
+    it('can recieve messages', async () => {
+      await new Promise(async resolve => {
+        redis.on('message', (channel, message) => {
+          expect(channel).toEqual('foo')
+          expect(message).toEqual('bar')
+          resolve()
+        })
+
+        expect(await redis.subscribe('foo')).toEqual(1)
+        const pub = redisLoader(redisUrl, { keyPrefix })
+        await pub.publish('foo', 'bar')
       })
-      expect(await redis.subscribe('foo')).toEqual(1)
-      const pub = redisLoader(redisUrl, { keyPrefix })
-      await pub.publish('foo', 'bar')
     })
   })
 })
