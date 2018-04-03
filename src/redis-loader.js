@@ -7,10 +7,11 @@ const scanCommands = ['scan', 'sscan', 'hscan', 'zscan', 'scanBuffer', 'sscanBuf
 const pubSubCommands = ['subscribe', 'unsubscribe', 'publish', 'psubscribe', 'punsubscribe']
 
 export default class RedisLoader {
-  constructor({ redis, logger = () => {} }) {
+  constructor({ redis, logger = () => {} } = {}) {
     invariant(redis, '"redis" is required')
     this._redis = redis
     this._tripCountTotal = 0
+    this._commands = undefined
     this._commandCount = undefined
     this._commandCountTotal = 0
     this._timeInRedis = undefined
@@ -23,6 +24,7 @@ export default class RedisLoader {
           const end = Date.now()
           const timeInRedis = end - start
           this._tripCountTotal++
+          this._commands = commands
           this._commandCount = commands.length
           this._commandCountTotal += commands.length
           this._timeInRedis = timeInRedis
@@ -94,6 +96,7 @@ export default class RedisLoader {
   get stats() {
     const {
       _tripCountTotal: tripCountTotal,
+      _commands: commands,
       _commandCount: commandCount,
       _commandCountTotal: commandCountTotal,
       _timeInRedis: timeInRedis,
@@ -101,6 +104,7 @@ export default class RedisLoader {
     } = this
     return {
       tripCountTotal,
+      commands,
       commandCount,
       commandCountTotal,
       timeInRedis,
@@ -108,8 +112,9 @@ export default class RedisLoader {
     }
   }
 
-  resetStats({ tripCountTotal = 0, commandCount, commandCountTotal = 0, timeInRedis, timeInRedisTotal = 0 } = {}) {
+  resetStats({ tripCountTotal = 0, commands, commandCount, commandCountTotal = 0, timeInRedis, timeInRedisTotal = 0 } = {}) {
     this._tripCountTotal = tripCountTotal
+    this._commands = commands
     this._commandCount = commandCount
     this._commandCountTotal = commandCountTotal
     this._timeInRedis = timeInRedis
