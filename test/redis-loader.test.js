@@ -1,10 +1,10 @@
 import { collect } from 'bluestream'
 import redisLoader from '../src/index'
-import { redis, cleanup, redisUrl, keyPrefix } from './helper'
+import { redis, redisUrl, keyPrefix } from './helper'
 
 describe('Redis - Loader', async () => {
   beforeEach(async () => {
-    await cleanup()
+    await redis.flushdb()
     redis.resetStats()
   })
 
@@ -14,7 +14,8 @@ describe('Redis - Loader', async () => {
       redis.dbsize(),
       redis.time()
     )
-    const { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal } = redis.stats
+    const { tripCountTotal, commands, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal } = redis.stats
+    expect(commands).toEqual([['ping'], ['dbsize'], ['time']])
     expect(commandCount).toEqual(3)
     expect(commandCountTotal).toEqual(3)
     expect(tripCountTotal).toEqual(1)
@@ -29,7 +30,8 @@ describe('Redis - Loader', async () => {
       redis.time()
     )
     redis.resetStats()
-    const { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal } = redis.stats
+    const { tripCountTotal, commands, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal } = redis.stats
+    expect(commands).toEqual(undefined)
     expect(commandCount).toEqual(undefined)
     expect(commandCountTotal).toEqual(0)
     expect(tripCountTotal).toEqual(0)
@@ -39,7 +41,8 @@ describe('Redis - Loader', async () => {
 
   describe('Logging', async () => {
     it('logs data when commands are batched', async () => {
-      function logger (_, { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal }) {
+      function logger (_, { tripCountTotal, commands, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal }) {
+        expect(commands).toEqual([['ping'], ['dbsize'], ['time']])
         expect(commandCount).toEqual(3)
         expect(commandCountTotal).toEqual(3)
         expect(tripCountTotal).toEqual(1)
