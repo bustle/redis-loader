@@ -1,6 +1,9 @@
 import { collect } from 'bluestream'
 import redisLoader from '../src/index'
-import { redis, redisUrl, keyPrefix } from './helper'
+
+export const keyPrefix = '_test_'
+export const redisUrl = 'redis://localhost:6379/8'
+export const redis = redisLoader(redisUrl, { keyPrefix })
 
 describe('Redis - Loader', async () => {
   beforeEach(async () => {
@@ -41,29 +44,43 @@ describe('Redis - Loader', async () => {
 
   describe('Logging', async () => {
     it('logs data when commands are batched', async () => {
-      function logger (_, { tripCountTotal, commands, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal }) {
-        expect(commands).toEqual([['ping'], ['dbsize'], ['time']])
-        expect(commandCount).toEqual(3)
-        expect(commandCountTotal).toEqual(3)
-        expect(tripCountTotal).toEqual(1)
-        expect(timeInRedis).toBeGreaterThanOrEqual(0)
-        expect(timeInRedisTotal).toBeGreaterThanOrEqual(0)
-      }
-      const redis = redisLoader(redisUrl, { keyPrefix, logger })
-      await Promise.join(
-        redis.ping(),
-        redis.dbsize(),
-        redis.time()
-      )
+      return new Promise(async resolve => {
+        function logger (_, { tripCountTotal, commands, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal }) {
+          expect(commands).toEqual([['ping'], ['dbsize'], ['time']])
+          expect(commandCount).toEqual(3)
+          expect(commandCountTotal).toEqual(3)
+          expect(tripCountTotal).toEqual(1)
+          expect(timeInRedis).toBeGreaterThanOrEqual(0)
+          expect(timeInRedisTotal).toBeGreaterThanOrEqual(0)
+          resolve()
+        }
+        const redis = redisLoader(redisUrl, { keyPrefix, logger })
+        await Promise.join(
+          redis.ping(),
+          redis.dbsize(),
+          redis.time()
+        )
+      })
     })
-    it('logs errors in the loader', async () => {
-      function logger (err) {
-        expect(err).toBeInstanceOf(Error)
-      }
-      const redis = redisLoader(redisUrl, { keyPrefix, logger })
-      try {
-        await redis.zadd('foo')
-      } catch (e) {}
+    it('logs errors and stats in the loader', async () => {
+      return new Promise(async (resolve, reject) => {
+        function logger (err, { tripCountTotal, commands, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal }) {
+          expect(err).toBeInstanceOf(Error)
+          expect(commands).toEqual([[ 'zadd', 'foo' ]])
+          expect(commandCount).toEqual(1)
+          expect(commandCountTotal).toEqual(1)
+          expect(tripCountTotal).toEqual(1)
+          expect(timeInRedis).toBeGreaterThanOrEqual(0)
+          expect(timeInRedisTotal).toBeGreaterThanOrEqual(0)
+          resolve()
+        }
+        const redis = redisLoader(redisUrl, { keyPrefix, logger })
+        try {
+          await expect(redis.zadd('foo')).rejects.toThrow('err')
+        } catch (e) {
+          reject(e)
+        }
+      })
     })
   })
 

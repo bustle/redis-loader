@@ -9,18 +9,13 @@ const pubSubCommands = ['subscribe', 'unsubscribe', 'publish', 'psubscribe', 'pu
 export default class RedisLoader {
   constructor({ redis, logger = () => {} } = {}) {
     invariant(redis, '"redis" is required')
+    this.resetStats()
     this._redis = redis
-    this._tripCountTotal = 0
-    this._commands = undefined
-    this._commandCount = undefined
-    this._commandCountTotal = 0
-    this._timeInRedis = undefined
-    this._timeInRedisTotal = 0
     this._dataLoader = new DataLoader(
       async commands => {
         const start = Date.now()
 
-        const log = () => {
+        const setStats = () => {
           const end = Date.now()
           const timeInRedis = end - start
           this._tripCountTotal++
@@ -29,28 +24,29 @@ export default class RedisLoader {
           this._commandCountTotal += commands.length
           this._timeInRedis = timeInRedis
           this._timeInRedisTotal += timeInRedis
-          logger(null, this.stats)
         }
 
         let results
         try {
           results = await redis.multi(commands).exec()
         } catch (err) {
-          log()
+          setStats()
           if (Array.isArray(err.previousErrors)) {
             err.message = `${err.message} ${err.previousErrors.map(e => e && e.message)}`
           }
           logger(err, this.stats)
           throw err
         }
-        log()
-        return results.map(([err, data]) => {
+        setStats()
+        const parsedResults = results.map(([err, data]) => {
           if (err) {
             logger(err, this.stats)
             throw err
           }
           return data
         })
+        logger(null, this.stats)
+        return parsedResults
       },
       { cache: false }
     )
@@ -112,7 +108,14 @@ export default class RedisLoader {
     }
   }
 
-  resetStats({ tripCountTotal = 0, commands, commandCount, commandCountTotal = 0, timeInRedis, timeInRedisTotal = 0 } = {}) {
+  resetStats({
+    tripCountTotal = 0,
+    commands,
+    commandCount,
+    commandCountTotal = 0,
+    timeInRedis,
+    timeInRedisTotal = 0
+  } = {}) {
     this._tripCountTotal = tripCountTotal
     this._commands = commands
     this._commandCount = commandCount
