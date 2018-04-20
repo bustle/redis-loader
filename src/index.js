@@ -11,3 +11,5 @@ export default function redisLoader(redisUrl, options = {}) {
 
   return new RedisLoader({ redis, logger })
 }
+
+export { RedisLoader }
