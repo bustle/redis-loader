@@ -15,8 +15,8 @@ export default class RedisLoader {
       async commands => {
         const start = Date.now()
         this._stats.commands = commands
-        this._stats.sentCommandsCount = commands.length
-        this._stats.sentCommandsCountTotal += commands.length
+        this._stats.sentCommandCount = commands.length
+        this._stats.sentCommandCountTotal += commands.length
 
         const setEndStats = (error, results) => {
           const end = Date.now()
