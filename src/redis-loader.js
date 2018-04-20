@@ -14,39 +14,45 @@ export default class RedisLoader {
     this._dataLoader = new DataLoader(
       async commands => {
         const start = Date.now()
+        this._stats.commands = commands
+        this._stats.sentCommandsCount = commands.length
+        this._stats.sentCommandsCountTotal += commands.length
 
-        const setStats = () => {
+        const setEndStats = (error, results) => {
           const end = Date.now()
           const timeInRedis = end - start
-          this._tripCountTotal++
-          this._commands = commands
-          this._commandCount = commands.length
-          this._commandCountTotal += commands.length
-          this._timeInRedis = timeInRedis
-          this._timeInRedisTotal += timeInRedis
+          this._stats.tripCountTotal++
+          this._stats.timeInRedis = timeInRedis
+          this._stats.timeInRedisTotal += timeInRedis
+          if (error) {
+            this._stats.responseCount = 1
+            this._stats.responseCountTotal += 1
+          } else {
+            this._stats.responseCount = results.length
+            this._stats.responseCountTotal += results.length
+          }
         }
 
-        let results
         try {
-          results = await redis.multi(commands).exec()
+          const results = await redis.multi(commands).exec()
+          setEndStats(null, results)
+          const parsedResults = results.map(([err, data]) => {
+            if (err) {
+              logger(err, this.stats)
+              throw err
+            }
+            return data
+          })
+          logger(null, this.stats)
+          return parsedResults
         } catch (err) {
-          setStats()
+          setEndStats(err)
           if (Array.isArray(err.previousErrors)) {
             err.message = `${err.message} ${err.previousErrors.map(e => e && e.message)}`
           }
           logger(err, this.stats)
           throw err
         }
-        setStats()
-        const parsedResults = results.map(([err, data]) => {
-          if (err) {
-            logger(err, this.stats)
-            throw err
-          }
-          return data
-        })
-        logger(null, this.stats)
-        return parsedResults
       },
       { cache: false }
     )
@@ -90,38 +96,31 @@ export default class RedisLoader {
   }
 
   get stats() {
-    const {
-      _tripCountTotal: tripCountTotal,
-      _commands: commands,
-      _commandCount: commandCount,
-      _commandCountTotal: commandCountTotal,
-      _timeInRedis: timeInRedis,
-      _timeInRedisTotal: timeInRedisTotal
-    } = this
     return {
-      tripCountTotal,
-      commands,
-      commandCount,
-      commandCountTotal,
-      timeInRedis,
-      timeInRedisTotal
+      ...this._stats
     }
   }
 
   resetStats({
     tripCountTotal = 0,
-    commands,
-    commandCount,
-    commandCountTotal = 0,
-    timeInRedis,
+    commands = null,
+    sentCommandCount = 0,
+    sentCommandCountTotal = 0,
+    responseCount = 0,
+    responseCountTotal = 0,
+    timeInRedis = 0,
     timeInRedisTotal = 0
   } = {}) {
-    this._tripCountTotal = tripCountTotal
-    this._commands = commands
-    this._commandCount = commandCount
-    this._commandCountTotal = commandCountTotal
-    this._timeInRedis = timeInRedis
-    this._timeInRedisTotal = timeInRedisTotal
+    this._stats = {
+      tripCountTotal,
+      commands,
+      sentCommandCount,
+      responseCount,
+      sentCommandCountTotal,
+      responseCountTotal,
+      timeInRedis,
+      timeInRedisTotal
+    }
   }
 }
 

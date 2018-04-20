@@ -17,10 +17,10 @@ describe('Redis - Loader', async () => {
       redis.dbsize(),
       redis.time()
     )
-    const { tripCountTotal, commands, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal } = redis.stats
+    const { tripCountTotal, commands, responseCount, responseCountTotal, timeInRedis, timeInRedisTotal } = redis.stats
     expect(commands).toEqual([['ping'], ['dbsize'], ['time']])
-    expect(commandCount).toEqual(3)
-    expect(commandCountTotal).toEqual(3)
+    expect(responseCount).toEqual(3)
+    expect(responseCountTotal).toEqual(3)
     expect(tripCountTotal).toEqual(1)
     expect(timeInRedis).toBeGreaterThanOrEqual(0)
     expect(timeInRedisTotal).toBeGreaterThanOrEqual(0)
@@ -33,22 +33,22 @@ describe('Redis - Loader', async () => {
       redis.time()
     )
     redis.resetStats()
-    const { tripCountTotal, commands, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal } = redis.stats
-    expect(commands).toEqual(undefined)
-    expect(commandCount).toEqual(undefined)
-    expect(commandCountTotal).toEqual(0)
+    const { tripCountTotal, commands, responseCount, responseCountTotal, timeInRedis, timeInRedisTotal } = redis.stats
+    expect(commands).toEqual(null)
+    expect(responseCount).toEqual(0)
+    expect(responseCountTotal).toEqual(0)
     expect(tripCountTotal).toEqual(0)
-    expect(timeInRedis).toEqual(undefined)
+    expect(timeInRedis).toEqual(0)
     expect(timeInRedisTotal).toEqual(0)
   })
 
   describe('Logging', async () => {
     it('logs data when commands are batched', async () => {
       return new Promise(async resolve => {
-        function logger (_, { tripCountTotal, commands, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal }) {
+        function logger (_, { tripCountTotal, commands, responseCount, responseCountTotal, timeInRedis, timeInRedisTotal }) {
           expect(commands).toEqual([['ping'], ['dbsize'], ['time']])
-          expect(commandCount).toEqual(3)
-          expect(commandCountTotal).toEqual(3)
+          expect(responseCount).toEqual(3)
+          expect(responseCountTotal).toEqual(3)
           expect(tripCountTotal).toEqual(1)
           expect(timeInRedis).toBeGreaterThanOrEqual(0)
           expect(timeInRedisTotal).toBeGreaterThanOrEqual(0)
@@ -64,11 +64,11 @@ describe('Redis - Loader', async () => {
     })
     it('logs errors and stats in the loader', async () => {
       return new Promise(async (resolve, reject) => {
-        function logger (err, { tripCountTotal, commands, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal }) {
+        function logger (err, { tripCountTotal, commands, responseCount, responseCountTotal, timeInRedis, timeInRedisTotal }) {
           expect(err).toBeInstanceOf(Error)
           expect(commands).toEqual([[ 'zadd', 'foo' ]])
-          expect(commandCount).toEqual(1)
-          expect(commandCountTotal).toEqual(1)
+          expect(responseCount).toEqual(1)
+          expect(responseCountTotal).toEqual(1)
           expect(tripCountTotal).toEqual(1)
           expect(timeInRedis).toBeGreaterThanOrEqual(0)
           expect(timeInRedisTotal).toBeGreaterThanOrEqual(0)
