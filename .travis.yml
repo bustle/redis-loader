@@ -8,6 +8,7 @@ node_js:
   - '9'
   - '8'
 script:
+- npx ts-node src/index.ts # prime the ts transpile cache
 - yarn lint
 - yarn test
 after_success:
