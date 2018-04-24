@@ -1,7 +1,5 @@
 import { Redis } from 'ioredis'
-import * as invariant from 'invariant'
 import { ReadStream, IReadableStreamOptions } from 'bluestream'
-import { ForkOptions } from 'child_process';
 
 export interface ScanStreamOptions extends IReadableStreamOptions {
    redis: Redis
@@ -21,7 +19,7 @@ export class ScanStream extends ReadStream {
   private _match: string
   private _count: string
 
-  constructor({ redis, command, key, match, count, ... opts }: ScanStreamOptions) {
+  constructor({ redis, command, key, match, count, ...opts }: ScanStreamOptions) {
     super(opts)
     this._redis = redis
     this._command = command

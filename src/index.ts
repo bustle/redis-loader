@@ -1,12 +1,11 @@
 import * as Redis from 'ioredis'
-import { RedisOptions } from 'ioredis'
 import { RedisLoader, statsLogger } from './redis-loader'
 
-export interface redisLoaderHelperOptions extends RedisOptions {
+export interface RedisLoaderHelperOptions extends Redis.RedisOptions {
   logger?: statsLogger
 }
 
-export default function redisLoader(redisUrl, options: redisLoaderHelperOptions = {}) {
+export default function redisLoader(redisUrl, options: RedisLoaderHelperOptions = {}) {
   const { logger, ...redisOptions } = options
   const redis = new Redis(redisUrl, redisOptions)
   return new RedisLoader({ redis, logger })

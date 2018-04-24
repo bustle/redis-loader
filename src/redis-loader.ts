@@ -2,10 +2,10 @@ import { EventEmitter } from 'events'
 import * as DataLoader from 'dataloader'
 import * as invariant from 'invariant'
 import { list as redisCommandList } from 'redis-commands'
-import { ScanStream, ScanStreamOptions } from "./scan-stream"
+import { ScanStream, ScanStreamOptions } from './scan-stream'
 import { Redis } from 'ioredis'
-import { redisMethods } from './interfaces'
-import { BatchStats, RedisStats } from './stats';
+import { RedisMethods } from './interfaces'
+import { RedisStats } from './stats'
 
 export type statsLogger = (stats: RedisStats) => void
 
@@ -14,7 +14,7 @@ export interface IRedisLoaderOptions {
   logger?: statsLogger
 }
 
-export class RedisLoader implements redisMethods, EventEmitter {
+export class RedisLoader implements RedisMethods, EventEmitter {
   public stats: RedisStats
   public redis: Redis
   private logger: statsLogger
@@ -52,7 +52,7 @@ export class RedisLoader implements redisMethods, EventEmitter {
   }
 
   async batchFunction(commands) : Promise<any> {
-    invariant(commands, "no commands to run")
+    invariant(commands, 'no commands to run')
     const batchStats = this.startBatch(commands)
     return this.redis.multi(commands).exec().then(
       response => {
@@ -418,7 +418,7 @@ pubSubCommands.forEach(command => {
 })
 
 const passThroughCommands = ['connect', 'disconnect']
-pubSubCommands.forEach(command => {
+passThroughCommands.forEach(command => {
   RedisLoader.prototype[command] = function (...args) { return this.redis[command](...args) }
 })
 

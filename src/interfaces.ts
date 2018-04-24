@@ -1,8 +1,8 @@
-import { ScanStream, ScanStreamOptions } from "./scan-stream"
+import { ScanStream, ScanStreamOptions } from './scan-stream'
 
-  // copied from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/ioredis/index.d.ts
-  // being a mixin of ioredis isn't really possible
-export interface redisMethods {
+// copied from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/ioredis/index.d.ts
+// being a mixin of ioredis isn't really possible
+export interface RedisMethods {
   // duplicate: () => Redis;
   connect: () => Promise<any>;
   disconnect: () => void;

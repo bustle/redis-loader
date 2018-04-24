@@ -12,7 +12,7 @@
     "clean": "rm -rf dist/*",
     "build": "yarn clean && tsc",
     "prepublish": "yarn build",
-    "lint": "eslint ./ --ignore-path .gitignore",
+    "lint": "eslint --ignore-path .gitignore src/**/*.ts test/**/*.ts",
     "test": "jest --runInBand --forceExit --bail --coverage"
   },
   "dependencies": {
@@ -39,11 +39,13 @@
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.0.1",
+    "eslint-plugin-typescript": "^0.11.0",
+    "ioredis": "^3.0.0",
     "jest": "^21.2.1",
     "ts-jest": "^21.2.4",
     "ts-node": "^4.0.2",
     "tslint": "^5.8.0",
-    "typescript": "^2.6.2",
-    "ioredis": "^3.0.0"
+    "typescript": "^2.8.3",
+    "typescript-eslint-parser": "^15.0.0"
   }
 }

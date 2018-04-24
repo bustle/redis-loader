@@ -1,10 +1,3 @@
-import { EventEmitter } from 'events'
-import * as invariant from 'invariant'
-import { list as redisCommandList } from 'redis-commands'
-import { ScanStream } from './scan-stream'
-import { Redis } from 'ioredis'
-import { redisMethods } from './interfaces'
-
 export class BatchStats {
   public commands: Array<any>
   public start: number;

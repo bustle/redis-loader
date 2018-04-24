@@ -47,7 +47,7 @@ describe('Redis - Loader', () => {
 
   describe('Logging', () => {
     it('logs data when commands are batched', done => {
-      let callCount = 0;
+      let callCount = 0
       function logger (stats) {
         const { batchCount, lastBatch, commandCount, responseCount, timeInRedis, batches } = stats
         callCount++
@@ -55,13 +55,14 @@ describe('Redis - Loader', () => {
           expect(callCount).toEqual(1)
           expect(batchCount).toEqual(1)
           expect(lastBatch.commands).toEqual([['ping'], ['ping'], ['ping']])
-          expect(lastBatch.response).toEqual([[null, "PONG"], [null, "PONG"], [null, "PONG"]])
+          expect(lastBatch.response).toEqual([[null, 'PONG'], [null, 'PONG'], [null, 'PONG']])
           expect(lastBatch.responseCount).toEqual(3)
           expect(responseCount).toEqual(3)
           expect(lastBatch.commandCount).toEqual(3)
           expect(commandCount).toEqual(3)
           expect(lastBatch.timeInRedis).toBeGreaterThanOrEqual(0)
           expect(timeInRedis).toEqual(lastBatch.timeInRedis)
+          expect(batches.size).toEqual(0)
           done()
         } catch (error) {
           done(error)
@@ -89,6 +90,7 @@ describe('Redis - Loader', () => {
           expect(batchCount).toEqual(1)
           expect(lastBatch.timeInRedis).toBeGreaterThanOrEqual(0)
           expect(timeInRedis).toEqual(lastBatch.timeInRedis)
+          expect(batches.size).toEqual(0)
           done()
         } catch (error) {
           done(error)
