@@ -9,8 +9,19 @@
     "plugin:jest/recommended"
   ],
   "plugins": [
-    "jest"
+    "jest",
+    "typescript"
   ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".ts"
+        ]
+      }
+    }
+  },
   "rules": {
     "standard/array-bracket-even-spacing": 0,
     "standard/computed-property-even-spacing": 0,
@@ -30,6 +41,16 @@
       }
     ],
     "no-return-await": "error",
-    "space-before-function-paren": 0
+    "space-before-function-paren": 0,
+    "no-eval": 0
+  },
+  "overrides": {
+    "files": ["**/*.ts"],
+    "parser": "typescript-eslint-parser",
+    "rules": {
+      "no-undef": 0,
+      "typescript/no-unused-vars": 2,
+      "typescript/class-name-casing": 2
+    }
   }
 }

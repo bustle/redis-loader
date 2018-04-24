@@ -1,0 +1,19 @@
+language: node_js
+cache:
+  directories:
+    - ~/.npm
+notifications:
+  email: false
+node_js:
+  - '9'
+  - '8'
+services:
+- redis-server
+script:
+- yarn lint
+- yarn test
+after_success:
+  # - npm run semantic-release
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
