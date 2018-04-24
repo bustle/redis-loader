@@ -4,23 +4,33 @@ An [`ioredis`](https://github.com/luin/ioredis)-like object that batches command
 ### Installation
 ```
 npm i --save redis-loader
+
+or
+
+yarn add redis-loader
 ```
 
 ### Examples
 ```js
-// RedisLoader supports an optional logger function that takes Node-style callbacks
-function logger (err, { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal }) {
+// RedisLoader supports an optional logger function with stats on each batch of commands
+function logger (stats) {
   //...
 }
 // set up like you would `ioredis`
 const redis = redisLoader('redis://localhost:6379/1', { keyPrefix: 'foo', logger })
-// three commands sent to Redis together
+
+// or setup ioredis
+const redis = new Redis(redisUrl, redisOptions)
+const redisLoader = new RedisLoader({ redis, logger })
+
+// three commands sent to Redis together in one multi
 await Promise.join(
   redis.ping(),
   redis.dbsize(),
   redis.time()
 )
-// three commands sent seperately to redis
+
+// three commands sent separately to redis
 await redis.ping()
 await redis.dbsize()
 await redis.time()
