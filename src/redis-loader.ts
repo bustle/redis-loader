@@ -5,8 +5,9 @@ import { list as redisCommandList } from 'redis-commands'
 import { ScanStream, ScanStreamOptions } from './scan-stream'
 import { Redis } from 'ioredis'
 import { RedisMethods } from './interfaces'
-import { RedisStats } from './stats'
+import { RedisStats, BatchStats } from './stats'
 
+export { BatchStats }
 export type statsLogger = (stats: RedisStats) => void
 
 export interface IRedisLoaderOptions {

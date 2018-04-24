@@ -12,7 +12,7 @@
     "clean": "rm -rf dist/*",
     "build": "yarn clean && tsc",
     "prepublish": "yarn build",
-    "lint": "eslint --ignore-path .gitignore src/**/*.ts test/**/*.ts",
+    "lint": "eslint --ignore-path .gitignore src/**/*.ts test/**/*.ts && tsc",
     "test": "jest --runInBand --forceExit --bail --coverage"
   },
   "dependencies": {
