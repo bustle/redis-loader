@@ -76,6 +76,34 @@ describe('Redis - Loader', () => {
       ).catch(done)
     })
 
+    it('converts to json nicely', done => {
+      function logger (stats) {
+        try {
+          const json = JSON.parse(JSON.stringify(stats))
+          expect(json).toMatchObject({
+            'batches': [], // Sets don't json so this has to be json'd as an array
+            'batchCount': 1,
+            'commandCount': 3,
+            'responseCount': 3,
+            'lastBatch': {
+              'commands': [['ping'], ['ping'], ['ping']],
+              'response': [[null, 'PONG'], [null, 'PONG'], [null, 'PONG']],
+              'error': null
+            }
+          })
+          done()
+        } catch (error) {
+          done(error)
+        }
+      }
+      const redis = redisLoader(redisUrl, { keyPrefix, logger })
+      bluebird.join(
+        redis.ping(),
+        redis.ping(),
+        redis.ping()
+      ).catch(done)
+    })
+
     it('logs errors and stats in the loader', done => {
       let callCount = 0
       function logger (stats) {

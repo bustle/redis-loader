@@ -13,6 +13,7 @@
     "clean": "rm -rf dist/*",
     "docs": "rm -rf ./docs && typedoc --out ./docs/ --theme minimal src/*.ts",
     "lint": "eslint --ignore-path .gitignore src/**/*.ts test/**/*.ts && tsc",
+    "format": "eslint --ignore-path .gitignore src/**/*.ts test/**/*.ts --fix",
     "prepublish": "yarn build",
     "test": "jest --runInBand --forceExit --bail --coverage"
   },

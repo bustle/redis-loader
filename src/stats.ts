@@ -65,4 +65,23 @@ export class RedisStats {
     this.lastBatch = batch
     this.batches.delete(batch)
   }
+
+  toJSON() {
+    const {
+      batches,
+      batchCount,
+      commandCount,
+      responseCount,
+      timeInRedis,
+      lastBatch
+    } = this
+    return {
+      batches: Array.from(batches),
+      batchCount,
+      commandCount,
+      responseCount,
+      timeInRedis,
+      lastBatch
+    }
+  }
 }
