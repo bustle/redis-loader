@@ -1,6 +1,3 @@
-const Promise = require('bluebird')
-global.Promise = Promise
-
 module.exports = {
   globals: {
     'ts-jest': {
@@ -8,13 +5,14 @@ module.exports = {
     }
   },
   moduleFileExtensions: [
-    'js'
+    'js',
+    'ts'
   ],
   transform: {
-    '^.+\\.(js)$': './node_modules/ts-jest/preprocessor.js'
+    '^.+\\.(js|ts)$': './node_modules/ts-jest/preprocessor.js'
   },
   testMatch: [
-    '**/test/**/*.test.js'
+    '**/test/**/*.test.(js|ts)'
   ],
   testEnvironment: 'node'
 }

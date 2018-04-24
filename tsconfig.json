@@ -1,15 +1,14 @@
 {
     "compilerOptions": {
-        "allowJs": true,
+        "allowJs": false,
         "module": "commonjs",
-        "target": "es2015",
+        "target": "es2017",
         "moduleResolution": "node",
         "outDir": "dist",
-        "types": [
-            "bluebird-global"
-        ],
+        "declaration": true
     },
     "include": [
-        "src/*.js"
+        "src/*.js",
+        "src/*.ts"
     ]
 }
