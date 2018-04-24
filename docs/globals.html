@@ -917,21 +917,31 @@ img { max-width: 100%; }
 			<h1 id="redisloader">RedisLoader</h1>
 			<p>An <a href="https://github.com/luin/ioredis"><code>ioredis</code></a>-like object that batches commands via <a href="https://github.com/facebook/dataloader"><code>dataloader</code></a>. Under the hood we have <code>dataloader</code> utilize redis&#39;s <code>multi</code> transactions to group commands called. We also support batching in streams, using <a href="https://github.com/bustle/bluestream"><code>bluestream</code></a> to make sure promises/async functions play nice in them.</p>
 			<h3 id="installation">Installation</h3>
-			<pre><code>npm <span class="hljs-selector-tag">i</span> --save redis-loader
+			<pre><code>npm i <span class="hljs-comment">--save redis-loader</span>
+
+<span class="hljs-keyword">or</span>
+
+yarn <span class="hljs-built_in">add</span> redis-loader
 </code></pre><h3 id="examples">Examples</h3>
-			<pre><code class="lang-js"><span class="hljs-comment">// RedisLoader supports an optional logger function that takes Node-style callbacks</span>
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">logger</span> (<span class="hljs-params">err, { tripCountTotal, commandCount, commandCountTotal, timeInRedis, timeInRedisTotal }</span>) </span>{
+			<pre><code class="lang-js"><span class="hljs-comment">// RedisLoader supports an optional logger function with stats on each batch of commands</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">logger</span> (<span class="hljs-params">stats</span>) </span>{
   <span class="hljs-comment">//...</span>
 }
 <span class="hljs-comment">// set up like you would `ioredis`</span>
 <span class="hljs-keyword">const</span> redis = redisLoader(<span class="hljs-string">'redis://localhost:6379/1'</span>, { <span class="hljs-attr">keyPrefix</span>: <span class="hljs-string">'foo'</span>, logger })
-<span class="hljs-comment">// three commands sent to Redis together</span>
+
+<span class="hljs-comment">// or setup ioredis</span>
+<span class="hljs-keyword">const</span> redis = <span class="hljs-keyword">new</span> Redis(redisUrl, redisOptions)
+<span class="hljs-keyword">const</span> redisLoader = <span class="hljs-keyword">new</span> RedisLoader({ redis, logger })
+
+<span class="hljs-comment">// three commands sent to Redis together in one multi</span>
 <span class="hljs-keyword">await</span> <span class="hljs-built_in">Promise</span>.join(
   redis.ping(),
   redis.dbsize(),
   redis.time()
 )
-<span class="hljs-comment">// three commands sent seperately to redis</span>
+
+<span class="hljs-comment">// three commands sent separately to redis</span>
 <span class="hljs-keyword">await</span> redis.ping()
 <span class="hljs-keyword">await</span> redis.dbsize()
 <span class="hljs-keyword">await</span> redis.time()
