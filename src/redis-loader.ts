@@ -4,7 +4,6 @@ import * as invariant from 'invariant'
 import { list as redisCommandList } from 'redis-commands'
 import { ScanStream, ScanStreamOptions } from './scan-stream'
 import { Redis } from 'ioredis'
-import { RedisMethods } from './interfaces'
 import { RedisStats, BatchStats } from './stats'
 
 export { BatchStats }
@@ -15,7 +14,7 @@ export interface IRedisLoaderOptions {
   logger?: statsLogger
 }
 
-export class RedisLoader implements RedisMethods, EventEmitter {
+export class RedisLoader implements EventEmitter {
   public stats: RedisStats
   public redis: Redis
   private logger: statsLogger
@@ -71,7 +70,8 @@ export class RedisLoader implements RedisMethods, EventEmitter {
   }
 
   // Dynamically generated methods
-  // this is really silly but useful, it's a copy of `./interfaces.ts`
+  // copied from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/ioredis/index.d.ts
+  // mixing in methods from ioredis itself isn't really possible
   // https://www.typescriptlang.org/docs/handbook/mixins.html
   connect: () => Promise<any>;
   disconnect: () => void;
