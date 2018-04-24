@@ -9,10 +9,11 @@
   },
   "main": "dist",
   "scripts": {
-    "clean": "rm -rf dist/*",
     "build": "yarn clean && tsc",
-    "prepublish": "yarn build",
+    "clean": "rm -rf dist/*",
+    "docs": "rm -rf ./docs && typedoc --out ./docs/ --theme minimal src/*.ts",
     "lint": "eslint --ignore-path .gitignore src/**/*.ts test/**/*.ts && tsc",
+    "prepublish": "yarn build",
     "test": "jest --runInBand --forceExit --bail --coverage"
   },
   "dependencies": {
@@ -45,6 +46,7 @@
     "ts-jest": "^21.2.4",
     "ts-node": "^4.0.2",
     "tslint": "^5.8.0",
+    "typedoc": "^0.11.1",
     "typescript": "^2.8.3",
     "typescript-eslint-parser": "^15.0.0"
   }

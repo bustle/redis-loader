@@ -36,16 +36,16 @@ export class RedisLoader implements EventEmitter {
     return this.redis
   }
 
-  startBatch(commands) {
+  private startBatch(commands) {
     return this.stats.startBatch(commands)
   }
 
-  endBatch(batchStats, error, response) {
+  private endBatch(batchStats, error, response) {
     this.stats.endBatch(batchStats, error, response)
     this.logStats()
   }
 
-  logStats() {
+  private logStats() {
     if (this.logger) {
       this.logger(this.stats)
     }
