@@ -7,12 +7,13 @@ notifications:
 node_js:
   - '9'
   - '8'
+services:
+- redis-server
 script:
-- npx ts-node src/index.ts # prime the ts transpile cache
 - yarn lint
 - yarn test
 after_success:
-  - npm run semantic-release
+  # - npm run semantic-release
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
