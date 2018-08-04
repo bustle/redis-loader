@@ -4,7 +4,7 @@ import { ReadStream, IReadableStreamOptions } from 'bluestream'
 export interface ScanStreamOptions extends IReadableStreamOptions {
    redis: Redis
    command: 'scan' | 'sscan' | 'hscan' | 'zscan' | 'scanBuffer' | 'sscanBuffer' | 'hscanBuffer' | 'zscanBuffer'
-   key?: string | null
+   key?: string
    match?: string
    count?: string
 }
@@ -15,9 +15,9 @@ export class ScanStream extends ReadStream {
   private _command: string
   private _opts: IReadableStreamOptions
   private _nextCursor: string
-  private _key: string
-  private _match: string
-  private _count: string
+  private _key: string | undefined
+  private _match: string | undefined
+  private _count: string | undefined
 
   constructor({ redis, command, key, match, count, ...opts }: ScanStreamOptions) {
     super(opts)

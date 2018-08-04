@@ -935,11 +935,11 @@ yarn <span class="hljs-built_in">add</span> redis-loader
 <span class="hljs-keyword">const</span> redisLoader = <span class="hljs-keyword">new</span> RedisLoader({ redis, logger })
 
 <span class="hljs-comment">// three commands sent to Redis together in one multi</span>
-<span class="hljs-keyword">await</span> <span class="hljs-built_in">Promise</span>.join(
+<span class="hljs-keyword">await</span> <span class="hljs-built_in">Promise</span>.all([
   redis.ping(),
   redis.dbsize(),
   redis.time()
-)
+])
 
 <span class="hljs-comment">// three commands sent separately to redis</span>
 <span class="hljs-keyword">await</span> redis.ping()

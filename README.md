@@ -24,11 +24,11 @@ const redis = new Redis(redisUrl, redisOptions)
 const redisLoader = new RedisLoader({ redis, logger })
 
 // three commands sent to Redis together in one multi
-await Promise.join(
+await Promise.all([
   redis.ping(),
   redis.dbsize(),
   redis.time()
-)
+])
 
 // three commands sent separately to redis
 await redis.ping()

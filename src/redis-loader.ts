@@ -17,7 +17,7 @@ export interface IRedisLoaderOptions {
 export class RedisLoader implements EventEmitter {
   public stats: RedisStats
   public redis: Redis
-  private logger: statsLogger
+  private logger: statsLogger | undefined
   private dataLoader: DataLoader<{}, {}>
 
   constructor({ redis, logger }: IRedisLoaderOptions) {
