@@ -366,18 +366,20 @@ export class RedisLoader implements EventEmitter {
 
   // The proxied event emitter methods
   addListener: (event: string | symbol, listener: Function) => this;
+  emit: (event: string | symbol, ...args: any[]) => boolean;
+  eventNames: () => (string | symbol)[];
+  getMaxListeners: () => number;
+  listenerCount: (type: string | symbol) => number;
+  listeners: (event: string | symbol) => Function[];
+  off: (event: string | symbol, listener: (...args: any[]) => void) => this;
   on: (event: string | symbol, listener: Function) => this;
   once: (event: string | symbol, listener: Function) => this;
   prependListener: (event: string | symbol, listener: Function) => this;
   prependOnceListener: (event: string | symbol, listener: Function) => this;
-  removeListener: (event: string | symbol, listener: Function) => this;
+  rawListeners: (event: string | symbol) => Function[]
   removeAllListeners: (event?: string | symbol) => this;
+  removeListener: (event: string | symbol, listener: Function) => this;
   setMaxListeners: (n: number) => this;
-  getMaxListeners: () => number;
-  listeners: (event: string | symbol) => Function[];
-  emit: (event: string | symbol, ...args: any[]) => boolean;
-  eventNames: () => (string | symbol)[];
-  listenerCount: (type: string | symbol) => number;
 }
 
 // Dynamically create the redis functions on our prototype
