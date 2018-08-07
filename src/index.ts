@@ -1,6 +1,7 @@
 import * as Redis from 'ioredis'
 import { RedisLoader, statsLogger } from './redis-loader'
 export { RedisLoader }
+
 export interface RedisLoaderHelperOptions extends Redis.RedisOptions {
   logger?: statsLogger
 }
