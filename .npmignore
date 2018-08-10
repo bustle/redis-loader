@@ -5,7 +5,6 @@ test
 .eslintrc
 tsconfig.json
 jest.config.js
-docs
 coverage
 .travis.yml
 .vscode
