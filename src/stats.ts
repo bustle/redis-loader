@@ -13,16 +13,18 @@ function endTimer(start: [number, number]) {
 }
 
 export class BatchStats {
-  public commands: Array<any>
-  public start: [number, number]
+  public readonly commands: Array<any>
+  public readonly start: [number, number]
+  public readonly multi: boolean
   public duration: number | null
   public response: Array<any> | null
   public error: Error|null
 
-  constructor({ commands, start = startTimer() }) {
+  constructor({ commands, start = startTimer(), multi }: { commands: string[][], start?: [number, number], multi: boolean, }) {
     this.start = start
-    this.duration = null
     this.commands = commands
+    this.multi = multi
+    this.duration = null
     this.response = null
     this.error = null
   }
@@ -47,7 +49,7 @@ export class BatchStats {
 }
 
 export class RedisStats {
-  public batches: Set<BatchStats>
+  public readonly batches: Set<BatchStats>
   public batchCount: number
   public commandCount: number
   public responseCount: number
@@ -63,8 +65,8 @@ export class RedisStats {
     this.lastBatch = null
   }
 
-  startBatch(commands) {
-    const batch = new BatchStats({ commands })
+  startBatch(batchInfo) {
+    const batch = new BatchStats(batchInfo)
     this.batches.add(batch)
     this.batchCount++
     this.commandCount += batch.commandCount

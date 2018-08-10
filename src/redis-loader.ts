@@ -12,6 +12,7 @@ export type statsLogger = (stats: RedisStats) => void
 export interface IRedisLoaderOptions {
   redis: Redis
   logger?: statsLogger
+  maxBatchSize?: number
 }
 
 export class RedisLoader implements EventEmitter {
@@ -20,12 +21,12 @@ export class RedisLoader implements EventEmitter {
   private logger: statsLogger | undefined
   private dataLoader: DataLoader<{}, {}>
 
-  constructor({ redis, logger }: IRedisLoaderOptions) {
+  constructor({ redis, logger, maxBatchSize = Infinity }: IRedisLoaderOptions) {
     invariant(redis, '"redis" is required')
     this.logger = logger
     this.stats = new RedisStats()
     this.redis = redis
-    this.dataLoader = new DataLoader(commands => this.batchFunction(commands), { cache: false })
+    this.dataLoader = new DataLoader(commands => this.batchFunction(commands as string[][]), { cache: false, maxBatchSize })
   }
 
   resetStats() {
@@ -36,8 +37,8 @@ export class RedisLoader implements EventEmitter {
     return this.redis
   }
 
-  private startBatch(commands) {
-    return this.stats.startBatch(commands)
+  private startBatch(batchInfo) {
+    return this.stats.startBatch(batchInfo)
   }
 
   private endBatch(batchStats, error, response) {
@@ -51,22 +52,40 @@ export class RedisLoader implements EventEmitter {
     }
   }
 
-  async batchFunction(commands) : Promise<any> {
-    invariant(commands, 'no commands to run')
-    const batchStats = this.startBatch(commands)
-    return this.redis.multi(commands).exec().then(
-      response => {
-        this.endBatch(batchStats, null, response)
-        return response.map(([error, data]) => error || data)
-      },
-      error => {
-        if (Array.isArray(error.previousErrors)) {
-          error.message = `${error.message}: ${error.previousErrors.map(e => e && e.message)}`
-        }
-        this.endBatch(batchStats, error, null)
-        throw error
+  batchFunction(commands: string[][]) : Promise<any> {
+    invariant(commands && commands.length > 0, 'no commands to run')
+    if (commands.length === 1) {
+      return this.executeSingle(commands)
+    }
+    return this.executeMulti(commands)
+  }
+
+  private async executeMulti(commands) {
+    const batchStats = this.startBatch({ commands, multi: true })
+    try {
+      const response = await this.redis.multi(commands).exec()
+      this.endBatch(batchStats, null, response)
+      return response.map(([error, data]) => error || data)
+    } catch (error) {
+      if (Array.isArray(error.previousErrors)) {
+        error.message = `${error.message}: ${error.previousErrors.map(e => e && e.message)}`
       }
-    )
+      this.endBatch(batchStats, error, null)
+      throw error
+    }
+  }
+
+  private async executeSingle(commands) {
+    const batchStats = this.startBatch({ commands, multi: false })
+    const [command, ...args] = commands[0]
+    try {
+      const response = await this.redis[command](...args)
+      this.endBatch(batchStats, null, [response])
+      return [response]
+    } catch (error) {
+      this.endBatch(batchStats, error, null)
+      throw error
+    }
   }
 
   // Dynamically generated methods

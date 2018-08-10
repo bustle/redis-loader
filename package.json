@@ -12,10 +12,10 @@
     "build": "yarn clean && tsc",
     "clean": "rm -rf dist/*",
     "docs": "rm -rf ./docs && typedoc --out ./docs/ --theme minimal src/*.ts && touch ./docs/.nojekyll",
-    "lint": "eslint --ignore-path .gitignore src/**/*.ts test/**/*.ts && tsc",
+    "lint": "eslint --ignore-path .gitignore src/**/*.ts && tsc",
     "format": "eslint --ignore-path .gitignore src/**/*.ts test/**/*.ts --fix",
     "prepublish": "yarn build",
-    "test": "jest --runInBand --forceExit --bail --coverage"
+    "test": "jest --runInBand --bail --coverage"
   },
   "dependencies": {
     "bluestream": "10",
