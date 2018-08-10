@@ -1,6 +1,6 @@
 import * as bluebird from 'bluebird'
 import { collect } from 'bluestream'
-import redisLoader from '../src/index'
+import redisLoader from '.'
 
 export const keyPrefix = '_test_'
 export const redisUrl = 'redis://localhost:6379/8'
@@ -10,6 +10,10 @@ describe('Redis - Loader', () => {
   beforeEach(async () => {
     await redis.flushdb()
     redis.resetStats()
+  })
+
+  afterAll(() => {
+    redis.disconnect()
   })
 
   it('can batch commands to Redis', async () => {
@@ -29,6 +33,18 @@ describe('Redis - Loader', () => {
     expect(timeInRedis).toBeGreaterThanOrEqual(0)
   })
 
+  it('can set batch size', async () => {
+    const batchRedis = redisLoader(redisUrl, { keyPrefix, maxBatchSize: 1 })
+    await bluebird.join(
+      batchRedis.ping(),
+      batchRedis.dbsize(),
+      batchRedis.time()
+    )
+    expect(batchRedis.stats.lastBatch.commandCount).toEqual(1)
+    expect(batchRedis.stats.batchCount).toEqual(3)
+    batchRedis.disconnect()
+  })
+
   it('can reset batch command counts', async () => {
     await bluebird.join(
       redis.ping(),
@@ -45,6 +61,15 @@ describe('Redis - Loader', () => {
     expect(batches.size).toEqual(0)
   })
 
+  it('skips multi if batch size is 1', async () => {
+    await redis.ping()
+    const { stats, stats: { lastBatch } } = redis
+    expect(stats.batchCount).toEqual(1)
+    expect(lastBatch.commandCount).toEqual(1)
+    expect(lastBatch.commands).toEqual([['ping']])
+    expect(lastBatch.multi).toEqual(false)
+  })
+
   describe('Logging', () => {
     it('logs data when commands are batched', done => {
       let callCount = 0
@@ -57,22 +82,24 @@ describe('Redis - Loader', () => {
           expect(lastBatch.commands).toEqual([['ping'], ['ping'], ['ping']])
           expect(lastBatch.response).toEqual([[null, 'PONG'], [null, 'PONG'], [null, 'PONG']])
           expect(lastBatch.responseCount).toEqual(3)
+          expect(lastBatch.multi).toEqual(true)
           expect(responseCount).toEqual(3)
           expect(lastBatch.commandCount).toEqual(3)
           expect(commandCount).toEqual(3)
           expect(lastBatch.timeInRedis).toBeGreaterThanOrEqual(0)
           expect(timeInRedis).toEqual(lastBatch.timeInRedis)
           expect(batches.size).toEqual(0)
+          loggingRedis.disconnect()
           done()
         } catch (error) {
           done(error)
         }
       }
-      const redis = redisLoader(redisUrl, { keyPrefix, logger })
+      const loggingRedis = redisLoader(redisUrl, { keyPrefix, logger })
       bluebird.join(
-        redis.ping(),
-        redis.ping(),
-        redis.ping()
+        loggingRedis.ping(),
+        loggingRedis.ping(),
+        loggingRedis.ping()
       ).catch(done)
     })
 
@@ -88,19 +115,22 @@ describe('Redis - Loader', () => {
             'lastBatch': {
               'commands': [['ping'], ['ping'], ['ping']],
               'response': [[null, 'PONG'], [null, 'PONG'], [null, 'PONG']],
-              'error': null
+              'error': null,
+              multi: true
             }
           })
+          loggingRedis.disconnect()
           done()
         } catch (error) {
+          loggingRedis.disconnect()
           done(error)
         }
       }
-      const redis = redisLoader(redisUrl, { keyPrefix, logger })
+      const loggingRedis = redisLoader(redisUrl, { keyPrefix, logger })
       bluebird.join(
-        redis.ping(),
-        redis.ping(),
-        redis.ping()
+        loggingRedis.ping(),
+        loggingRedis.ping(),
+        loggingRedis.ping()
       ).catch(done)
     })
 
@@ -119,13 +149,14 @@ describe('Redis - Loader', () => {
           expect(lastBatch.timeInRedis).toBeGreaterThanOrEqual(0)
           expect(timeInRedis).toEqual(lastBatch.timeInRedis)
           expect(batches.size).toEqual(0)
+          loggingRedis.disconnect()
           done()
         } catch (error) {
           done(error)
         }
       }
-      const redis = redisLoader(redisUrl, { keyPrefix, logger })
-      expect(redis.zadd('foo')).rejects.toThrow('err').catch(done)
+      const loggingRedis = redisLoader(redisUrl, { keyPrefix, logger })
+      expect(loggingRedis.zadd('foo')).rejects.toThrow('err').catch(done)
     })
   })
 
@@ -160,30 +191,34 @@ describe('Redis - Loader', () => {
   describe('PubSub', () => {
     it('can publish messages', done => {
       const sub = redisLoader(redisUrl, { keyPrefix })
+      const pub = redisLoader(redisUrl, { keyPrefix })
       sub.redis.on('message', (channel, message) => {
         expect(channel).toEqual('11')
         expect(message).toEqual('pix')
+        sub.disconnect()
+        pub.disconnect()
         done()
       })
 
       sub.redis.subscribe('11').then(subscriptions => {
         expect(subscriptions).toEqual(1)
-        const pub = redisLoader(redisUrl, { keyPrefix })
         pub.publish('11', 'pix')
       })
     })
 
     it('can subscribe to messages', done => {
       const sub = redisLoader(redisUrl, { keyPrefix })
+      const pub = redisLoader(redisUrl, { keyPrefix })
       sub.on('message', (channel, message) => {
         expect(channel).toEqual('7')
         expect(message).toEqual('action news')
+        sub.disconnect()
+        pub.disconnect()
         done()
       })
 
       sub.subscribe('7').then(subscriptions => {
         expect(subscriptions).toEqual(1)
-        const pub = redisLoader(redisUrl, { keyPrefix })
         pub.redis.publish('7', 'action news')
       })
     })
