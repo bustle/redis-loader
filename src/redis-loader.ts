@@ -402,14 +402,14 @@ export class RedisLoader implements EventEmitter {
   xlenBuffer: (key: string) => any;
   xpending: (key: string, group: string, ...args: Array<string | number>) => any;
   xpendingBuffer: (key: string, group: string, ...args: Array<string | number>) => any;
-  xrange: (key: string, start: string, end: string,  COUNT?: "COUNT", count?: string | number) => any;
-  xrangeBuffer: (key: string, start: string, end: string,  COUNT?: "COUNT", count?: string | number) => any;
+  xrange: (key: string, start: string, end: string, COUNT?: "COUNT", count?: string | number) => any;
+  xrangeBuffer: (key: string, start: string, end: string, COUNT?: "COUNT", count?: string | number) => any;
   xread: (...args: Array<string | number>) => any;
   xreadBuffer: (...args: Array<string | number>) => any;
   xreadgroup: (...args: Array<string | number>) => any;
   xreadgroupBuffer: (...args: Array<string | number>) => any;
-  xrevrange: (key: string, start: string, end: string,  COUNT?: "COUNT", count?: string | number) => any;
-  xrevrangeBuffer: (key: string, start: string, end: string,  COUNT?: "COUNT", count?: string | number) => any;
+  xrevrange: (key: string, start: string, end: string, COUNT?: "COUNT", count?: string | number) => any;
+  xrevrangeBuffer: (key: string, start: string, end: string, COUNT?: "COUNT", count?: string | number) => any;
   xtrim: (key: string, MAXLEN: "MAXLEN", tilde?: "~", count?: string | number) => any;
   xtrimBuffer: (key: string, MAXLEN: "MAXLEN", tilde?: "~", count?: string | number) => any;
 
