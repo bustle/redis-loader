@@ -224,6 +224,14 @@ export class RedisLoader implements EventEmitter {
   zrankBuffer: (key: string, member: string) => Promise<number>;
   zrevrank: (key: string, member: string) => Promise<number>;
   zrevrankBuffer: (key: string, member: string) => Promise<number>;
+  zpopmax: (key: string, count?: number) => any;
+  zpopmaxBuffer: (key: string, count?: number) => any;
+  bzpopmax: (key: string, ...keysOrTimeout: Array<string | number>) => any;
+  bzpopmaxBuffer: (key: string, ...keysOrTimeout: Array<string | number>) => any;
+  zpopmin: (key: string, count?: number) => any;
+  zpopminBuffer: (key: string, count?: number) => any;
+  bzpopmin: (key: string, ...keysOrTimeout: Array<string | number>) => any;
+  bzpopminBuffer: (key: string, ...keysOrTimeout: Array<string | number>) => any;
   hset: (key: string, field: string, value: any) => Promise<0 | 1>;
   hsetBuffer: (key: string, field: string, value: any) => Promise<0 | 1>;
   hsetnx: (key: string, field: string, value: any) => Promise<0 | 1>;
@@ -374,6 +382,38 @@ export class RedisLoader implements EventEmitter {
   pfaddBuffer: (key: string, ...elements: string[]) => any;
   pfcount: (...keys: string[]) => any;
   pfcountBuffer: (...keys: string[]) => any;
+  memory: (subcommand: string, key?: string) => any;
+  memoryBuffer: (subcommand: string, key?: string) => any;
+
+  // Redis Streams
+  xack: (key: string, group: string, ...ids: Array<string | number>) => any;
+  xackBuffer: (key: string, group: string, ...ids: Array<string | number>) => any;
+  xadd: (key: string, id: string | number, ...fieldAndString: Array<string>) => any;
+  xaddBuffer: (key: string, id: string | number, ...fieldAndString: Array<string>) => any;
+  xclaim: (...args: Array<string | number>) => any;
+  xclaimBuffer: (...args: Array<string | number>) => any;
+  xdel: (key: string, ...ids: Array<string | number>) => any;
+  xdelBuffer: (key: string, ...ids: Array<string | number>) => any;
+  xgroup: (...args: Array<string | number>) => any;
+  xgroupBuffer: (...args: Array<string | number>) => any;
+  xinfo: (...args: Array<string | number>) => any;
+  xinfoBuffer: (...args: Array<string | number>) => any;
+  xlen: (key: string) => any;
+  xlenBuffer: (key: string) => any;
+  xpending: (key: string, group: string, ...args: Array<string | number>) => any;
+  xpendingBuffer: (key: string, group: string, ...args: Array<string | number>) => any;
+  xrange: (key: string, start: string, end: string,  COUNT?: "COUNT", count?: string | number) => any;
+  xrangeBuffer: (key: string, start: string, end: string,  COUNT?: "COUNT", count?: string | number) => any;
+  xread: (...args: Array<string | number>) => any;
+  xreadBuffer: (...args: Array<string | number>) => any;
+  xreadgroup: (...args: Array<string | number>) => any;
+  xreadgroupBuffer: (...args: Array<string | number>) => any;
+  xrevrange: (key: string, start: string, end: string,  COUNT?: "COUNT", count?: string | number) => any;
+  xrevrangeBuffer: (key: string, start: string, end: string,  COUNT?: "COUNT", count?: string | number) => any;
+  xtrim: (key: string, MAXLEN: "MAXLEN", tilde?: "~", count?: string | number) => any;
+  xtrimBuffer: (key: string, MAXLEN: "MAXLEN", tilde?: "~", count?: string | number) => any;
+
+  // Node Streams
   scanStream: (options?: ScanStreamOptions) => ScanStream;
   scanStreamBuffer: (options?: ScanStreamOptions) => ScanStream;
   sscanStream: (options?: ScanStreamOptions) => ScanStream;
