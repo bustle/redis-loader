@@ -18,11 +18,11 @@
   ],
   "main": "dist",
   "scripts": {
-    "build": "yarn clean && tsc",
+    "build": "npm run clean && tsc",
     "clean": "rm -rf dist/*",
     "lint": "eslint --ignore-path .gitignore src/**/*.ts && tsc",
     "format": "eslint --ignore-path .gitignore src/**/*.ts --fix",
-    "prepublish": "yarn build",
+    "prepublish": "npm run build",
     "test": "jest --runInBand --bail --coverage"
   },
   "dependencies": {
