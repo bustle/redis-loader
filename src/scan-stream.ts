@@ -1,12 +1,15 @@
 import { Redis } from 'ioredis'
 import { ReadStream, IReadableStreamOptions } from 'bluestream'
 
-export interface ScanStreamOptions extends IReadableStreamOptions {
-   redis: Redis
-   command: 'scan' | 'sscan' | 'hscan' | 'zscan' | 'scanBuffer' | 'sscanBuffer' | 'hscanBuffer' | 'zscanBuffer'
-   key?: string
-   match?: string
-   count?: string | number
+export interface ScanStreamOptions {
+  key?: string
+  match?: string
+  count?: string | number
+}
+
+interface ScanStreamConstructorOptions extends IReadableStreamOptions, ScanStreamOptions {
+  redis: Redis
+  command: 'scan' | 'sscan' | 'hscan' | 'zscan' | 'scanBuffer' | 'sscanBuffer' | 'hscanBuffer' | 'zscanBuffer'
 }
 
 // Bluestream based scan streams
@@ -19,7 +22,7 @@ export class ScanStream extends ReadStream {
   private _match: string | undefined
   private _count: string | undefined
 
-  constructor({ redis, command, key, match, count, ...opts }: ScanStreamOptions) {
+  constructor({ redis, command, key, match, count, ...opts }: ScanStreamConstructorOptions) {
     super(opts)
     this._redis = redis
     this._command = command
