@@ -8,6 +8,7 @@ import { RedisStats, BatchStats } from './stats'
 
 export { BatchStats }
 export type statsLogger = (stats: RedisStats) => void
+type stringable = number | string | Buffer
 
 export interface IRedisLoaderOptions {
   redis: Redis
@@ -92,8 +93,8 @@ export class RedisLoader implements EventEmitter {
   // copied from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/ioredis/index.d.ts
   // mixing in methods from ioredis itself isn't really possible
   // https://www.typescriptlang.org/docs/handbook/mixins.html
-  connect: () => Promise<any>;
-  disconnect: () => void;
+
+  // STRING COMMANDS BEGIN
   bitcount: (key: string, start?: number, end?: number) => Promise<number>;
   bitcountBuffer: (key: string, start?: number, end?: number) => Promise<number>;
   get: (key: string) => Promise<string>;
@@ -112,6 +113,8 @@ export class RedisLoader implements EventEmitter {
   strlenBuffer: (key: string) => Promise<number>;
   del: (...keys: string[]) => any;
   delBuffer: (...keys: string[]) => any;
+  dump: (key: string) => Promise<string>;
+  dumpBuffer: (key: string) => Promise<string>;
   exists: (...keys: string[]) => any;
   existsBuffer: (...keys: string[]) => any;
   setbit: (key: string, offset: number, value: any) => Promise<number>;
@@ -130,6 +133,21 @@ export class RedisLoader implements EventEmitter {
   decrBuffer: (key: string) => Promise<number>;
   mget: (...keys: string[]) => any;
   mgetBuffer: (...keys: string[]) => any;
+  incrby: (key: string, increment: number) => Promise<number>;
+  incrbyBuffer: (key: string, increment: number) => Promise<number>;
+  incrbyfloat: (key: string, increment: number) => Promise<number>;
+  incrbyfloatBuffer: (key: string, increment: number) => Promise<number>;
+  decrby: (key: string, decrement: number) => Promise<number>;
+  decrbyBuffer: (key: string, decrement: number) => Promise<number>;
+  getset: (key: string, value: any) => Promise<string>;
+  getsetBuffer: (key: string, value: any) => Promise<string>;
+  mset: (key: string, value: any, ...args: string[]) => any;
+  msetBuffer: (key: string, value: any, ...args: string[]) => any;
+  msetnx: (key: string, value: any, ...args: string[]) => any;
+  msetnxBuffer: (key: string, value: any, ...args: string[]) => any;
+  // STRING COMMANDS BEGIN
+
+  // LIST COMMANDS BEGIN
   rpush: (key: string, ...values: any[]) => any;
   rpushBuffer: (key: string, ...values: any[]) => any;
   lpush: (key: string, ...values: any[]) => any;
@@ -164,6 +182,9 @@ export class RedisLoader implements EventEmitter {
   lremBuffer: (key: string, count: number, value: any) => Promise<number>;
   rpoplpush: (source: string, destination: string) => Promise<string>;
   rpoplpushBuffer: (source: string, destination: string) => Promise<string>;
+  // LIST COMMANDS END
+
+  // SET COMMANDS BEGIN
   sadd: (key: string, ...members: any[]) => any;
   saddBuffer: (key: string, ...members: any[]) => any;
   srem: (key: string, ...members: any[]) => any;
@@ -192,30 +213,43 @@ export class RedisLoader implements EventEmitter {
   sdiffstoreBuffer: (destination: string, ...keys: string[]) => any;
   smembers: (key: string) => Promise<any>;
   smembersBuffer: (key: string) => Promise<any>;
+  sscan: (key: string, cursor: number, ...args: any[]) => any;
+  sscanBuffer: (key: string, cursor: number, ...args: any[]) => any;
+  sscanStream: (options?: ScanStreamOptions) => ScanStream;
+  sscanBufferStream: (options?: ScanStreamOptions) => ScanStream;
+  // SET COMMANDS END
+
+  // SORTED SET COMMANDS BEGIN
   zadd: (key: string, ...args: string[]) => any;
   zaddBuffer: (key: string, ...args: string[]) => any;
   zincrby: (key: string, increment: number, member: string) => Promise<any>;
   zincrbyBuffer: (key: string, increment: number, member: string) => Promise<any>;
   zrem: (key: string, ...members: any[]) => any;
   zremBuffer: (key: string, ...members: any[]) => any;
-  zremrangebyscore: (key: string, min: number | string, max: number | string) => Promise<any>;
-  zremrangebyscoreBuffer: (key: string, min: number | string, max: number | string) => Promise<any>;
+  zremrangebyscore: (key: string, min: stringable, max: stringable) => Promise<any>;
+  zremrangebyscoreBuffer: (key: string, min: stringable, max: stringable) => Promise<any>;
   zremrangebyrank: (key: string, start: number, stop: number) => Promise<any>;
   zremrangebyrankBuffer: (key: string, start: number, stop: number) => Promise<any>;
   zunionstore: (destination: string, numkeys: number, key: string, ...args: string[]) => any;
   zunionstoreBuffer: (destination: string, numkeys: number, key: string, ...args: string[]) => any;
-  zinterstore: (destination: string, numkeys: number, key: string, ...args: string[]) => any;
-  zinterstoreBuffer: (destination: string, numkeys: number, key: string, ...args: string[]) => any;
+  zinterstore: (destination: string, numkeys: number, ...args: string[]) => any;
+  zinterstoreBuffer: (destination: string, numkeys: number, ...args: string[]) => any;
   zrange: (key: string, start: number, stop: number, withScores?: "WITHSCORES") => Promise<any>;
   zrangeBuffer: (key: string, start: number, stop: number, withScores?: "WITHSCORES") => Promise<any>;
   zrevrange: (key: string, start: number, stop: number, withScores?: "WITHSCORES") => Promise<any>;
   zrevrangeBuffer: (key: string, start: number, stop: number, withScores?: "WITHSCORES") => Promise<any>;
-  zrangebyscore: (key: string, min: number | string, max: number | string, ...args: string[]) => any;
-  zrangebyscoreBuffer: (key: string, min: number | string, max: number | string, ...args: string[]) => any;
-  zrevrangebyscore: (key: string, max: number | string, min: number | string, ...args: string[]) => any;
-  zrevrangebyscoreBuffer: (key: string, max: number | string, min: number | string, ...args: string[]) => any;
-  zcount: (key: string, min: number | string, max: number | string) => Promise<number>;
-  zcountBuffer: (key: string, min: number | string, max: number | string) => Promise<number>;
+  zrangebyscore: (key: string, min: stringable, max: stringable, ...args: (string | number)[]) => any;
+  zrangebyscoreBuffer: (key: string, min: stringable, max: stringable, ...args: (string | number)[]) => any;
+  zrevrangebyscore: (key: string, max: stringable, min: stringable, ...args: (string | number)[]) => any;
+  zrevrangebyscoreBuffer: (key: string, max: stringable, min: stringable, ...args: (string | number)[]) => any;
+  zrangebylex: (key: string, min: stringable, max: stringable, ...args: (string | number)[]) => any;
+  zrangebylexBuffer: (key: string, min: stringable, max: stringable, ...args: (string | number)[]) => any;
+  zrevrangebylex: (key: string, max: stringable, min: stringable, ...args: (string | number)[]) => any;
+  zrevrangebylexBuffer: (key: string, max: stringable, min: stringable, ...args: (string | number)[]) => any;
+  zcount: (key: string, min: stringable, max: stringable) => Promise<number>;
+  zcountBuffer: (key: string, min: stringable, max: stringable) => Promise<number>;
+  zlexcount: (key: string, min: stringable, max: stringable) => Promise<number>;
+  zlexcountBuffer: (key: string, min: stringable, max: stringable) => Promise<number>;
   zcard: (key: string) => Promise<number>;
   zcardBuffer: (key: string) => Promise<number>;
   zscore: (key: string, member: string) => Promise<number>;
@@ -226,12 +260,19 @@ export class RedisLoader implements EventEmitter {
   zrevrankBuffer: (key: string, member: string) => Promise<number>;
   zpopmax: (key: string, count?: number) => any;
   zpopmaxBuffer: (key: string, count?: number) => any;
-  bzpopmax: (key: string, ...keysOrTimeout: Array<string | number>) => any;
-  bzpopmaxBuffer: (key: string, ...keysOrTimeout: Array<string | number>) => any;
   zpopmin: (key: string, count?: number) => any;
   zpopminBuffer: (key: string, count?: number) => any;
+  bzpopmax: (key: string, ...keysOrTimeout: Array<string | number>) => any;
+  bzpopmaxBuffer: (key: string, ...keysOrTimeout: Array<string | number>) => any;
   bzpopmin: (key: string, ...keysOrTimeout: Array<string | number>) => any;
   bzpopminBuffer: (key: string, ...keysOrTimeout: Array<string | number>) => any;
+  zscan: (key: string, cursor: number, ...args: any[]) => any;
+  zscanBuffer: (key: string, cursor: number, ...args: any[]) => any;
+  zscanStream: (key: string, options?: ScanStreamOptions) => ScanStream;
+  zscanBufferStream: (key: string, options?: ScanStreamOptions) => ScanStream;
+  // SORTED SET COMMANDS END
+
+  // HASH COMMANDS BEGIN
   hset: (key: string, field: string, value: any) => Promise<0 | 1>;
   hsetBuffer: (key: string, field: string, value: any) => Promise<0 | 1>;
   hsetnx: (key: string, field: string, value: any) => Promise<0 | 1>;
@@ -258,134 +299,22 @@ export class RedisLoader implements EventEmitter {
   hgetallBuffer: (key: string) => Promise<any>;
   hexists: (key: string, field: string) => Promise<0 | 1>;
   hexistsBuffer: (key: string, field: string) => Promise<0 | 1>;
-  incrby: (key: string, increment: number) => Promise<number>;
-  incrbyBuffer: (key: string, increment: number) => Promise<number>;
-  incrbyfloat: (key: string, increment: number) => Promise<number>;
-  incrbyfloatBuffer: (key: string, increment: number) => Promise<number>;
-  decrby: (key: string, decrement: number) => Promise<number>;
-  decrbyBuffer: (key: string, decrement: number) => Promise<number>;
-  getset: (key: string, value: any) => Promise<string>;
-  getsetBuffer: (key: string, value: any) => Promise<string>;
-  mset: (key: string, value: any, ...args: string[]) => any;
-  msetBuffer: (key: string, value: any, ...args: string[]) => any;
-  msetnx: (key: string, value: any, ...args: string[]) => any;
-  msetnxBuffer: (key: string, value: any, ...args: string[]) => any;
-  randomkey: () => Promise<string>;
-  randomkeyBuffer: () => Promise<string>;
-  select: (index: number) => Promise<string>;
-  selectBuffer: (index: number) => Promise<string>;
-  move: (key: string, db: string) => Promise<0 | 1>;
-  moveBuffer: (key: string, db: string) => Promise<0 | 1>;
-  rename: (key: string, newkey: string) => Promise<string>;
-  renameBuffer: (key: string, newkey: string) => Promise<string>;
-  renamenx: (key: string, newkey: string) => Promise<0 | 1>;
-  renamenxBuffer: (key: string, newkey: string) => Promise<0 | 1>;
-  expire: (key: string, seconds: number) => Promise<0 | 1>;
-  expireBuffer: (key: string, seconds: number) => Promise<0 | 1>;
-  pexpire: (key: string, milliseconds: number) => Promise<0 | 1>;
-  pexpireBuffer: (key: string, milliseconds: number) => Promise<0 | 1>;
-  expireat: (key: string, timestamp: number) => Promise<0 | 1>;
-  expireatBuffer: (key: string, timestamp: number) => Promise<0 | 1>;
-  pexpireat: (key: string, millisecondsTimestamp: number) => Promise<0 | 1>;
-  pexpireatBuffer: (key: string, millisecondsTimestamp: number) => Promise<0 | 1>;
-  keys: (pattern: string) => Promise<string[]>;
-  keysBuffer: (pattern: string) => Promise<string[]>;
-  dbsize: () => Promise<number>;
-  dbsizeBuffer: () => Promise<number>;
-  auth: (password: string) => Promise<string>;
-  authBuffer: (password: string) => Promise<string>;
-  ping: (message?: string) => Promise<string>;
-  pingBuffer: (message?: string) => Promise<string>;
-  echo: (message: string) => Promise<string>;
-  echoBuffer: (message: string) => Promise<string>;
-  save: () => Promise<string>;
-  saveBuffer: () => Promise<string>;
-  bgsave: () => Promise<string>;
-  bgsaveBuffer: () => Promise<string>;
-  bgrewriteaof: () => Promise<string>;
-  bgrewriteaofBuffer: () => Promise<string>;
-  shutdown: (save: "SAVE" | "NOSAVE") => Promise<any>;
-  shutdownBuffer: (save: "SAVE" | "NOSAVE") => Promise<any>;
-  lastsave: () => Promise<number>;
-  lastsaveBuffer: () => Promise<number>;
-  type: (key: string) => Promise<string>;
-  typeBuffer: (key: string) => Promise<string>;
-  exec: () => Promise<any>;
-  execBuffer: () => Promise<any>;
-  discard: () => Promise<any>;
-  discardBuffer: () => Promise<any>;
-  sync: () => Promise<any>;
-  syncBuffer: () => Promise<any>;
-  flushdb: () => Promise<string>;
-  flushdbBuffer: () => Promise<string>;
-  flushall: () => Promise<string>;
-  flushallBuffer: () => Promise<string>;
-  sort: (key: string, ...args: string[]) => any;
-  sortBuffer: (key: string, ...args: string[]) => any;
-  info: (section?: string) => Promise<string>;
-  infoBuffer: (section?: string) => Promise<string>;
-  time: () => Promise<any>;
-  timeBuffer: () => Promise<any>;
-  ttl: (key: string) => Promise<number>;
-  ttlBuffer: (key: string) => Promise<number>;
-  persist: (key: string) => Promise<0 | 1>;
-  persistBuffer: (key: string) => Promise<0 | 1>;
-  slaveof: (host: string, port: number) => Promise<string>;
-  slaveofBuffer: (host: string, port: number) => Promise<string>;
-  debug: (...args: any[]) => any;
-  debugBuffer: (...args: any[]) => any;
-  config: (...args: any[]) => any;
-  configBuffer: (...args: any[]) => any;
-  subscribe: (...channels: any[]) => any;
-  subscribeBuffer: (...channels: any[]) => any;
-  unsubscribe: (...channels: string[]) => any;
-  unsubscribeBuffer: (...channels: string[]) => any;
-  psubscribe: (...patterns: string[]) => any;
-  psubscribeBuffer: (...patterns: string[]) => any;
-  punsubscribe: (...patterns: string[]) => any;
-  punsubscribeBuffer: (...patterns: string[]) => any;
-  publish: (channel: string, message: string) => Promise<number>;
-  publishBuffer: (channel: string, message: string) => Promise<number>;
-  watch: (...keys: string[]) => any;
-  watchBuffer: (...keys: string[]) => any;
-  unwatch: () => Promise<string>;
-  unwatchBuffer: () => Promise<string>;
-  cluster: (...args: any[]) => any;
-  clusterBuffer: (...args: any[]) => any;
-  restore: (...args: any[]) => any;
-  restoreBuffer: (...args: any[]) => any;
-  migrate: (...args: any[]) => any;
-  migrateBuffer: (...args: any[]) => any;
-  dump: (key: string) => Promise<string>;
-  dumpBuffer: (key: string) => Promise<string>;
-  object: (subcommand: string, ...args: any[]) => any;
-  objectBuffer: (subcommand: string, ...args: any[]) => any;
-  client: (...args: any[]) => any;
-  clientBuffer: (...args: any[]) => any;
-  eval: (...args: any[]) => any;
-  evalBuffer: (...args: any[]) => any;
-  evalsha: (...args: any[]) => any;
-  evalshaBuffer: (...args: any[]) => any;
-  script: (...args: any[]) => any;
-  scriptBuffer: (...args: any[]) => any;
-  quit: () => Promise<string>;
-  quitBuffer: () => Promise<string>;
-  scan: (cursor: number, ...args: any[]) => any;
-  scanBuffer: (cursor: number, ...args: any[]) => any;
   hscan: (key: string, cursor: number, ...args: any[]) => any;
   hscanBuffer: (key: string, cursor: number, ...args: any[]) => any;
-  zscan: (key: string, cursor: number, ...args: any[]) => any;
-  zscanBuffer: (key: string, cursor: number, ...args: any[]) => any;
+  hscanStream: (key: string, options?: ScanStreamOptions) => ScanStream;
+  hscanBufferStream: (key: string, options?: ScanStreamOptions) => ScanStream;
+  // HASH COMMANDS END
+
+  // HYPER LOG LOG COMMANDS BEGIN
   pfmerge: (destkey: string, ...sourcekeys: string[]) => any;
   pfmergeBuffer: (destkey: string, ...sourcekeys: string[]) => any;
   pfadd: (key: string, ...elements: string[]) => any;
   pfaddBuffer: (key: string, ...elements: string[]) => any;
   pfcount: (...keys: string[]) => any;
   pfcountBuffer: (...keys: string[]) => any;
-  memory: (subcommand: string, key?: string) => any;
-  memoryBuffer: (subcommand: string, key?: string) => any;
+  // HYPER LOG LOG COMMANDS END
 
-  // Redis Streams
+  // REDIS STREAMS BEGIN
   xack: (key: string, group: string, ...ids: Array<string | number>) => any;
   xackBuffer: (key: string, group: string, ...ids: Array<string | number>) => any;
   xadd: (key: string, id: string | number, ...fieldAndString: Array<string>) => any;
@@ -412,18 +341,134 @@ export class RedisLoader implements EventEmitter {
   xrevrangeBuffer: (key: string, start: string, end: string, COUNT?: "COUNT", count?: string | number) => any;
   xtrim: (key: string, MAXLEN: "MAXLEN", tilde?: "~", count?: string | number) => any;
   xtrimBuffer: (key: string, MAXLEN: "MAXLEN", tilde?: "~", count?: string | number) => any;
+  // REDIS STREAMS END
 
-  // Node Streams
+  // KEY COMMANDS BEGIN
+  move: (key: string, db: string) => Promise<0 | 1>;
+  moveBuffer: (key: string, db: string) => Promise<0 | 1>;
+  rename: (key: string, newkey: string) => Promise<string>;
+  renameBuffer: (key: string, newkey: string) => Promise<string>;
+  renamenx: (key: string, newkey: string) => Promise<0 | 1>;
+  renamenxBuffer: (key: string, newkey: string) => Promise<0 | 1>;
+  expire: (key: string, seconds: number) => Promise<0 | 1>;
+  expireBuffer: (key: string, seconds: number) => Promise<0 | 1>;
+  pexpire: (key: string, milliseconds: number) => Promise<0 | 1>;
+  pexpireBuffer: (key: string, milliseconds: number) => Promise<0 | 1>;
+  expireat: (key: string, timestamp: number) => Promise<0 | 1>;
+  expireatBuffer: (key: string, timestamp: number) => Promise<0 | 1>;
+  migrate: (...args: any[]) => any;
+  migrateBuffer: (...args: any[]) => any;
+  object: (subcommand: string, ...args: any[]) => any;
+  objectBuffer: (subcommand: string, ...args: any[]) => any;
+  pexpireat: (key: string, millisecondsTimestamp: number) => Promise<0 | 1>;
+  pexpireatBuffer: (key: string, millisecondsTimestamp: number) => Promise<0 | 1>;
+  keys: (pattern: string) => Promise<string[]>;
+  keysBuffer: (pattern: string) => Promise<string[]>;
+  ttl: (key: string) => Promise<number>;
+  ttlBuffer: (key: string) => Promise<number>;
+  sort: (key: string, ...args: string[]) => any;
+  sortBuffer: (key: string, ...args: string[]) => any;
+  randomkey: () => Promise<string>;
+  randomkeyBuffer: () => Promise<string>;
+  persist: (key: string) => Promise<0 | 1>;
+  persistBuffer: (key: string) => Promise<0 | 1>;
+  type: (key: string) => Promise<string>;
+  typeBuffer: (key: string) => Promise<string>;
+  scan: (cursor: number, ...args: any[]) => any;
+  scanBuffer: (cursor: number, ...args: any[]) => any;
   scanStream: (options?: ScanStreamOptions) => ScanStream;
-  scanStreamBuffer: (options?: ScanStreamOptions) => ScanStream;
-  sscanStream: (options?: ScanStreamOptions) => ScanStream;
-  sscanStreamBuffer: (options?: ScanStreamOptions) => ScanStream;
-  hscanStream: (key: string, options?: ScanStreamOptions) => ScanStream;
-  hscanStreamBuffer: (key: string, options?: ScanStreamOptions) => ScanStream;
-  zscanStream: (key: string, options?: ScanStreamOptions) => ScanStream;
-  zscanStreamBuffer: (key: string, options?: ScanStreamOptions) => ScanStream;
+  scanBufferStream: (options?: ScanStreamOptions) => ScanStream;
+  // KEY COMMANDS END
+
+  // DATABASE COMMANDS BEGIN
+  auth: (password: string) => Promise<string>;
+  authBuffer: (password: string) => Promise<string>;
+  echo: (message: string) => Promise<string>;
+  echoBuffer: (message: string) => Promise<string>;
+  ping: (message?: string) => Promise<string>;
+  pingBuffer: (message?: string) => Promise<string>;
+  quit: () => Promise<string>;
+  quitBuffer: () => Promise<string>;
+  select: (index: number) => Promise<string>;
+  selectBuffer: (index: number) => Promise<string>;
+  swap: (sourceIndex: number, targetIndex: number) => Promise<string>;
+  swapBuffer: (sourceIndex: number, targetIndex: number) => Promise<string>;
+  // DATABASE COMMANDS END
+
+  // LUA SCRIPT COMMANDS BEGIN
+  eval: (...args: any[]) => any;
+  evalBuffer: (...args: any[]) => any;
+  evalsha: (...args: any[]) => any;
+  evalshaBuffer: (...args: any[]) => any;
+  script: (...args: any[]) => any;
+  scriptBuffer: (...args: any[]) => any;
+  // LUA SCRIPT COMMANDS END
+
+  // PUB SUB COMMANDS BEGIN
+  subscribe: (...channels: any[]) => any;
+  subscribeBuffer: (...channels: any[]) => any;
+  unsubscribe: (...channels: string[]) => any;
+  unsubscribeBuffer: (...channels: string[]) => any;
+  psubscribe: (...patterns: string[]) => any;
+  psubscribeBuffer: (...patterns: string[]) => any;
+  punsubscribe: (...patterns: string[]) => any;
+  punsubscribeBuffer: (...patterns: string[]) => any;
+  publish: (channel: string, message: string) => Promise<number>;
+  publishBuffer: (channel: string, message: string) => Promise<number>;
+  // PUB SUB COMMANDS END
+
+  // MISC COMMANDS BEGIN
+  dbsize: () => Promise<number>;
+  dbsizeBuffer: () => Promise<number>;
+  save: () => Promise<string>;
+  saveBuffer: () => Promise<string>;
+  bgsave: () => Promise<string>;
+  bgsaveBuffer: () => Promise<string>;
+  bgrewriteaof: () => Promise<string>;
+  bgrewriteaofBuffer: () => Promise<string>;
+  shutdown: (save: "SAVE" | "NOSAVE") => Promise<any>;
+  shutdownBuffer: (save: "SAVE" | "NOSAVE") => Promise<any>;
+  lastsave: () => Promise<number>;
+  lastsaveBuffer: () => Promise<number>;
+  exec: () => Promise<any>;
+  execBuffer: () => Promise<any>;
+  discard: () => Promise<any>;
+  discardBuffer: () => Promise<any>;
+  sync: () => Promise<any>;
+  syncBuffer: () => Promise<any>;
+  flushdb: () => Promise<string>;
+  flushdbBuffer: () => Promise<string>;
+  flushall: () => Promise<string>;
+  flushallBuffer: () => Promise<string>;
+  info: (section?: string) => Promise<string>;
+  infoBuffer: (section?: string) => Promise<string>;
+  time: () => Promise<any>;
+  timeBuffer: () => Promise<any>;
+  slaveof: (host: string, port: number) => Promise<string>;
+  slaveofBuffer: (host: string, port: number) => Promise<string>;
+  debug: (...args: any[]) => any;
+  debugBuffer: (...args: any[]) => any;
+  config: (...args: any[]) => any;
+  configBuffer: (...args: any[]) => any;
+  watch: (...keys: string[]) => any;
+  watchBuffer: (...keys: string[]) => any;
+  unwatch: () => Promise<string>;
+  unwatchBuffer: () => Promise<string>;
+  cluster: (...args: any[]) => any;
+  clusterBuffer: (...args: any[]) => any;
+  restore: (...args: any[]) => any;
+  restoreBuffer: (...args: any[]) => any;
+  client: (...args: any[]) => any;
+  clientBuffer: (...args: any[]) => any;
+  memory: (subcommand: string, key?: string) => any;
+  memoryBuffer: (subcommand: string, key?: string) => any;
+  wait: (numreplicas: stringable, timeout: stringable) => any;
+  waitBuffer: (numreplicas: stringable, timeout: stringable) => any;
+  // MISC COMMANDS END
 
   // The proxied event emitter methods
+  connect: () => Promise<any>;
+  disconnect: () => void;
   addListener: (event: string | symbol, listener: Function) => this;
   emit: (event: string | symbol, ...args: any[]) => boolean;
   eventNames: () => (string | symbol)[];

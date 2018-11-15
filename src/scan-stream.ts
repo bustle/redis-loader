@@ -6,7 +6,7 @@ export interface ScanStreamOptions extends IReadableStreamOptions {
    command: 'scan' | 'sscan' | 'hscan' | 'zscan' | 'scanBuffer' | 'sscanBuffer' | 'hscanBuffer' | 'zscanBuffer'
    key?: string
    match?: string
-   count?: string
+   count?: string | number
 }
 
 // Bluestream based scan streams
@@ -27,7 +27,7 @@ export class ScanStream extends ReadStream {
     this._nextCursor = '0'
     this._key = key
     this._match = match
-    this._count = count
+    this._count = count ? String(count) : undefined
   }
 
   async _read() {
