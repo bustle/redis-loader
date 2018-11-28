@@ -1,12 +1,13 @@
 import { EventEmitter } from 'events'
-import * as DataLoader from 'dataloader'
-import * as invariant from 'invariant'
+import DataLoader from 'dataloader'
 import { list as redisCommandList } from 'redis-commands'
 import { ScanStream, ScanStreamOptions } from './scan-stream'
 import { Redis } from 'ioredis'
 import { RedisStats, BatchStats } from './stats'
+import { scanIterable, ScanIterableOptions } from './scan-iterable'
 
 export { BatchStats }
+export { ScanIterableOptions, ScanStreamOptions }
 export type statsLogger = (stats: RedisStats) => void
 type stringable = number | string | Buffer
 
@@ -23,7 +24,7 @@ export class RedisLoader implements EventEmitter {
   private dataLoader: DataLoader<{}, {}>
 
   constructor({ redis, logger, maxBatchSize = Infinity }: IRedisLoaderOptions) {
-    invariant(redis, '"redis" is required')
+    if (!redis) { throw new Error('"redis" is required') }
     this.logger = logger
     this.stats = new RedisStats()
     this.redis = redis
@@ -54,7 +55,7 @@ export class RedisLoader implements EventEmitter {
   }
 
   batchFunction(commands: string[][]) : Promise<any> {
-    invariant(commands && commands.length > 0, 'no commands to run')
+    if (!(commands && commands.length > 0)) { throw new Error('no commands to run') }
     if (commands.length === 1) {
       return this.executeSingle(commands)
     }
@@ -217,6 +218,8 @@ export class RedisLoader implements EventEmitter {
   sscanBuffer: (key: string, cursor: number, ...args: any[]) => any;
   sscanStream: (options?: ScanStreamOptions) => ScanStream;
   sscanBufferStream: (options?: ScanStreamOptions) => ScanStream;
+  sscanIterable: (options?: ScanIterableOptions) => AsyncIterableIterator<string>;
+  sscanBufferIterable: (options?: ScanIterableOptions) => AsyncIterableIterator<Buffer>;
   // SET COMMANDS END
 
   // SORTED SET COMMANDS BEGIN
@@ -270,6 +273,9 @@ export class RedisLoader implements EventEmitter {
   zscanBuffer: (key: string, cursor: number, ...args: any[]) => any;
   zscanStream: (key: string, options?: ScanStreamOptions) => ScanStream;
   zscanBufferStream: (key: string, options?: ScanStreamOptions) => ScanStream;
+  zscanIterable: (key: string, options?: ScanIterableOptions) => AsyncIterableIterator<string>;
+  zscanBufferIterable: (key: string, options?: ScanIterableOptions) => AsyncIterableIterator<Buffer>;
+
   // SORTED SET COMMANDS END
 
   // HASH COMMANDS BEGIN
@@ -303,6 +309,9 @@ export class RedisLoader implements EventEmitter {
   hscanBuffer: (key: string, cursor: number, ...args: any[]) => any;
   hscanStream: (key: string, options?: ScanStreamOptions) => ScanStream;
   hscanBufferStream: (key: string, options?: ScanStreamOptions) => ScanStream;
+  hscanIterable: (key: string, options?: ScanIterableOptions) => AsyncIterableIterator<string>;
+  hscanBufferIterable: (key: string, options?: ScanIterableOptions) => AsyncIterableIterator<Buffer>;
+
   // HASH COMMANDS END
 
   // HYPER LOG LOG COMMANDS BEGIN
@@ -378,6 +387,8 @@ export class RedisLoader implements EventEmitter {
   scanBuffer: (cursor: number, ...args: any[]) => any;
   scanStream: (options?: ScanStreamOptions) => ScanStream;
   scanBufferStream: (options?: ScanStreamOptions) => ScanStream;
+  scanIterable: (options?: ScanIterableOptions) => AsyncIterableIterator<string>;
+  scanBufferIterable: (options?: ScanIterableOptions) => AsyncIterableIterator<Buffer>;
   // KEY COMMANDS END
 
   // DATABASE COMMANDS BEGIN
@@ -504,12 +515,24 @@ redisCommandList.forEach(command => {
 
 const scanCommands = ['scan', 'sscan', 'hscan', 'zscan', 'scanBuffer', 'sscanBuffer', 'hscanBuffer', 'zscanBuffer']
 scanCommands.forEach(command => {
-  RedisLoader.prototype[`${command}Stream`] = function (key, options) {
+  RedisLoader.prototype[`${command}Stream`] = function (this: RedisLoader, key, options) {
     if (command === 'scan' || command === 'scanBuffer') {
       options = key
       key = null
     }
     return new ScanStream({
+      key,
+      redis: this,
+      command,
+      ...options
+    })
+  }
+  RedisLoader.prototype[`${command}Iterable`] = function (this: RedisLoader, key, options) {
+    if (command === 'scan' || command === 'scanBuffer') {
+      options = key
+      key = null
+    }
+    return scanIterable({
       key,
       redis: this,
       command,
