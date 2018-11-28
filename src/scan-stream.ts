@@ -1,6 +1,6 @@
 import { ReadStream, IReadableStreamOptions } from 'bluestream'
 import { RedisLoader } from './redis-loader'
-import { scanIterable } from './scan-iterable';
+import { scanIterable } from './scan-iterable'
 
 type ScanCommand = 'scan' | 'sscan' | 'hscan' | 'zscan' | 'scanBuffer' | 'sscanBuffer' | 'hscanBuffer' | 'zscanBuffer'
 

@@ -24,6 +24,9 @@ describe('Redis - Loader', () => {
       redis.time()
     )
     const { batchCount, lastBatch, commandCount, responseCount, timeInRedis } = redis.stats
+    if (!lastBatch) {
+      throw new Error('expected lastBatch')
+    }
     expect(lastBatch.commands).toEqual([['ping'], ['dbsize'], ['time']])
     expect(lastBatch.commandCount).toEqual(3)
     expect(lastBatch.responseCount).toEqual(3)
@@ -41,7 +44,7 @@ describe('Redis - Loader', () => {
       batchRedis.dbsize(),
       batchRedis.time()
     )
-    expect(batchRedis.stats.lastBatch.commandCount).toEqual(1)
+    expect(batchRedis.stats.lastBatch && batchRedis.stats.lastBatch.commandCount).toEqual(1)
     expect(batchRedis.stats.batchCount).toEqual(3)
     batchRedis.disconnect()
   })
@@ -66,9 +69,9 @@ describe('Redis - Loader', () => {
     await redis.ping()
     const { stats, stats: { lastBatch } } = redis
     expect(stats.batchCount).toEqual(1)
-    expect(lastBatch.commandCount).toEqual(1)
-    expect(lastBatch.commands).toEqual([['ping']])
-    expect(lastBatch.multi).toEqual(false)
+    expect(lastBatch && lastBatch.commandCount).toEqual(1)
+    expect(lastBatch && lastBatch.commands).toEqual([['ping']])
+    expect(lastBatch && lastBatch.multi).toEqual(false)
   })
 
   describe('Logging', () => {
