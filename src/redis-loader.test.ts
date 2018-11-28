@@ -1,5 +1,6 @@
-import * as bluebird from 'bluebird'
+import bluebird from 'bluebird'
 import { collect } from 'bluestream'
+import { collect as collectItr } from 'streaming-iterables'
 import redisLoader from '.'
 
 export const keyPrefix = '_test_'
@@ -185,6 +186,43 @@ describe('Redis - Loader', () => {
       expect(await collect(redis.zscanStream('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
       const { batchCount } = redis.stats
       expect(batchCount).toEqual(1)
+    })
+  })
+
+  describe('asyncIterators', () => {
+    it('iterators a scan', async () => {
+      await Promise.all([
+        redis.zadd('foo', '0', 'abc'),
+        redis.zadd('foo', '0', 'def'),
+        redis.zadd('foo', '0', 'ghi')
+      ])
+      redis.resetStats()
+      expect(await collectItr(redis.zscanIterable('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
+      const { batchCount } = redis.stats
+      expect(batchCount).toEqual(1)
+    })
+
+    it('returns a custom async iterator from the stream', async () => {
+      await Promise.all([
+        redis.zadd('foo', '0', 'abc'),
+        redis.zadd('foo', '0', 'def'),
+        redis.zadd('foo', '0', 'ghi')
+      ])
+      redis.resetStats()
+      expect(await collectItr(redis.zscanStream('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
+      const { batchCount } = redis.stats
+      expect(batchCount).toEqual(1)
+    })
+    it('paginates', async () => {
+      const work = []
+      for (let i = 0; i < 500; i++) {
+        redis.zadd('foo', String(i), String(i))
+      }
+      await Promise.all(work)
+      const results = await collectItr(redis.zscanIterable('foo', { count: 10 }))
+      const { batchCount } = redis.stats
+      expect(results.length).toBeGreaterThan(1)
+      expect(batchCount).toBeGreaterThan(1)
     })
   })
 

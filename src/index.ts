@@ -1,4 +1,4 @@
-import * as Redis from 'ioredis'
+import Redis from 'ioredis'
 import { RedisLoader, statsLogger } from './redis-loader'
 export { RedisLoader }
 

@@ -26,6 +26,7 @@
     "standard/array-bracket-even-spacing": 0,
     "standard/computed-property-even-spacing": 0,
     "standard/object-curly-even-spacing": 0,
+    "generator-star-spacing":["error", {"before": false, "after": true}],
     "curly": [
       "error",
       "all"

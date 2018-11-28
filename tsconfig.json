@@ -1,17 +1,22 @@
 {
-    "compilerOptions": {
-        "allowJs": false,
-        "declaration": true,
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "outDir": "dist",
-        "strictNullChecks": true,
-        "target": "es2017"
-    },
-    "include": [
-        "src/*.ts"
-    ],
-    "exclude": [
-        "src/*.test.ts"
+  "compilerOptions": {
+    "allowJs": false,
+    "declaration": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "strictNullChecks": true,
+    "target": "es2017",
+    "esModuleInterop": true,
+    "lib": [
+      "es2017",
+      "esnext.asynciterable"
     ]
+  },
+  "include": [
+    "src/*.ts"
+  ],
+  "exclude": [
+    "src/*.test.ts"
+  ]
 }
