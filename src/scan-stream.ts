@@ -1,6 +1,5 @@
 import { ReadStream, IReadableStreamOptions } from 'bluestream'
 import { RedisLoader } from './redis-loader'
-import { scanIterable } from './scan-iterable'
 
 type ScanCommand = 'scan' | 'sscan' | 'hscan' | 'zscan' | 'scanBuffer' | 'sscanBuffer' | 'hscanBuffer' | 'zscanBuffer'
 
@@ -32,16 +31,6 @@ export class ScanStream extends ReadStream {
     this._key = key
     this._match = match
     this._count = count ? String(count) : undefined
-  }
-
-  [Symbol.asyncIterator]() {
-    return scanIterable({
-      redis: this._redis,
-      command: this._command,
-      key: this._key,
-      match: this._match,
-      count: this._count
-    })
   }
 
   async _read() {
