@@ -1,6 +1,6 @@
 import bluebird from 'bluebird'
 import { collect } from 'bluestream'
-import { collect as collectItr } from 'streaming-iterables'
+import { collect as collectItr, flatten } from 'streaming-iterables'
 import redisLoader from '.'
 
 export const keyPrefix = '_test_'
@@ -219,13 +219,14 @@ describe('Redis - Loader', () => {
     it('paginates', async () => {
       const work = []
       for (let i = 0; i < 500; i++) {
-        redis.zadd('foo', String(i), String(i))
+        redis.zadd('foo', String(i), `member${i}`)
       }
       await Promise.all(work)
       const results = await collectItr(redis.zscanIterable('foo', { count: 10 }))
       const { batchCount } = redis.stats
       expect(results.length).toBeGreaterThan(1)
       expect(batchCount).toBeGreaterThan(1)
+      expect((await collectItr(flatten(results)))).toHaveLength(1000)
     })
   })
 
