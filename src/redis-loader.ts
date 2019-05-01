@@ -214,12 +214,12 @@ export class RedisLoader implements EventEmitter {
   sdiffstoreBuffer: (destination: string, ...keys: string[]) => any;
   smembers: (key: string) => Promise<any>;
   smembersBuffer: (key: string) => Promise<any>;
-  sscan: (key: string, cursor: number, ...args: any[]) => any;
-  sscanBuffer: (key: string, cursor: number, ...args: any[]) => any;
+  sscan: (key: string, cursor: number, ...args: any[]) => [string, string[]];
+  sscanBuffer: (key: string, cursor: number, ...args: any[]) => [Buffer, Buffer[]];
   sscanStream: (options?: ScanStreamOptions) => ScanStream;
   sscanBufferStream: (options?: ScanStreamOptions) => ScanStream;
-  sscanIterable: (options?: ScanIterableOptions) => AsyncIterableIterator<string>;
-  sscanBufferIterable: (options?: ScanIterableOptions) => AsyncIterableIterator<Buffer>;
+  sscanIterable: (options?: ScanIterableOptions) => AsyncIterableIterator<string[]>;
+  sscanBufferIterable: (options?: ScanIterableOptions) => AsyncIterableIterator<Buffer[]>;
   // SET COMMANDS END
 
   // SORTED SET COMMANDS BEGIN
@@ -269,13 +269,12 @@ export class RedisLoader implements EventEmitter {
   bzpopmaxBuffer: (key: string, ...keysOrTimeout: Array<string | number>) => any;
   bzpopmin: (key: string, ...keysOrTimeout: Array<string | number>) => any;
   bzpopminBuffer: (key: string, ...keysOrTimeout: Array<string | number>) => any;
-  zscan: (key: string, cursor: number, ...args: any[]) => any;
-  zscanBuffer: (key: string, cursor: number, ...args: any[]) => any;
+  zscan: (key: string, cursor: number, ...args: any[]) => [string, string[]];
+  zscanBuffer: (key: string, cursor: number, ...args: any[]) => [Buffer, Buffer[]];
   zscanStream: (key: string, options?: ScanStreamOptions) => ScanStream;
   zscanBufferStream: (key: string, options?: ScanStreamOptions) => ScanStream;
-  zscanIterable: (key: string, options?: ScanIterableOptions) => AsyncIterableIterator<string>;
-  zscanBufferIterable: (key: string, options?: ScanIterableOptions) => AsyncIterableIterator<Buffer>;
-
+  zscanIterable: (key: string, options?: ScanIterableOptions) => AsyncIterableIterator<string[]>;
+  zscanBufferIterable: (key: string, options?: ScanIterableOptions) => AsyncIterableIterator<Buffer[]>;
   // SORTED SET COMMANDS END
 
   // HASH COMMANDS BEGIN
@@ -305,13 +304,12 @@ export class RedisLoader implements EventEmitter {
   hgetallBuffer: (key: string) => Promise<any>;
   hexists: (key: string, field: string) => Promise<0 | 1>;
   hexistsBuffer: (key: string, field: string) => Promise<0 | 1>;
-  hscan: (key: string, cursor: number, ...args: any[]) => any;
-  hscanBuffer: (key: string, cursor: number, ...args: any[]) => any;
+  hscan: (key: string, cursor: number, ...args: any[]) => [string, string[]];
+  hscanBuffer: (key: string, cursor: number, ...args: any[]) => [Buffer, Buffer[]];
   hscanStream: (key: string, options?: ScanStreamOptions) => ScanStream;
   hscanBufferStream: (key: string, options?: ScanStreamOptions) => ScanStream;
-  hscanIterable: (key: string, options?: ScanIterableOptions) => AsyncIterableIterator<string>;
-  hscanBufferIterable: (key: string, options?: ScanIterableOptions) => AsyncIterableIterator<Buffer>;
-
+  hscanIterable: (key: string, options?: ScanIterableOptions) => AsyncIterableIterator<string[]>;
+  hscanBufferIterable: (key: string, options?: ScanIterableOptions) => AsyncIterableIterator<Buffer[]>;
   // HASH COMMANDS END
 
   // HYPER LOG LOG COMMANDS BEGIN
@@ -383,12 +381,12 @@ export class RedisLoader implements EventEmitter {
   persistBuffer: (key: string) => Promise<0 | 1>;
   type: (key: string) => Promise<string>;
   typeBuffer: (key: string) => Promise<string>;
-  scan: (cursor: number, ...args: any[]) => any;
-  scanBuffer: (cursor: number, ...args: any[]) => any;
+  scan: (cursor: number, ...args: any[]) => [string, string[]];
+  scanBuffer: (cursor: number, ...args: any[]) => [Buffer, Buffer[]];
   scanStream: (options?: ScanStreamOptions) => ScanStream;
   scanBufferStream: (options?: ScanStreamOptions) => ScanStream;
-  scanIterable: (options?: ScanIterableOptions) => AsyncIterableIterator<string>;
-  scanBufferIterable: (options?: ScanIterableOptions) => AsyncIterableIterator<Buffer>;
+  scanIterable: (options?: ScanIterableOptions) => AsyncIterableIterator<string[]>;
+  scanBufferIterable: (options?: ScanIterableOptions) => AsyncIterableIterator<Buffer[]>;
   // KEY COMMANDS END
 
   // DATABASE COMMANDS BEGIN
