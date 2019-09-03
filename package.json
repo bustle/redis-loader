@@ -1,6 +1,6 @@
 {
   "name": "redis-loader",
-  "version": "6.3.1",
+  "version": "6.3.2",
   "description": "An io-redis like object that batches queries with dataloader",
   "author": "Tristan Siegel <tristan.siegel@bustle.com>",
   "license": "MIT",
