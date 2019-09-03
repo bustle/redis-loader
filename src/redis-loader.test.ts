@@ -164,7 +164,7 @@ describe('Redis - Loader', () => {
     })
   })
 
-  describe('Buffers', async () => {
+  describe('Buffers', () => {
     it('can batch buffer commands to redis', async () => {
       const results = await bluebird.join(
         redis.pingBuffer(),
