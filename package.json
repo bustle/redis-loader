@@ -30,7 +30,7 @@
     "redis-commands": "^1.4.0"
   },
   "peerDependencies": {
-    "ioredis": ">=3.0.0"
+    "ioredis": ">=4.0.0"
   },
   "devDependencies": {
     "@types/ioredis": "^4.28.10",

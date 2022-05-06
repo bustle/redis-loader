@@ -110,14 +110,14 @@ describe('Redis - Loader', () => {
         try {
           const json = JSON.parse(JSON.stringify(stats))
           expect(json).toMatchObject({
-            'batches': [], // Sets don't json so this has to be json'd as an array
-            'batchCount': 1,
-            'commandCount': 3,
-            'responseCount': 3,
-            'lastBatch': {
-              'commands': [['ping'], ['ping'], ['ping']],
-              'response': [[null, 'PONG'], [null, 'PONG'], [null, 'PONG']],
-              'error': null,
+            batches: [], // Sets don't json so this has to be json'd as an array
+            batchCount: 1,
+            commandCount: 3,
+            responseCount: 3,
+            lastBatch: {
+              commands: [['ping'], ['ping'], ['ping']],
+              response: [[null, 'PONG'], [null, 'PONG'], [null, 'PONG']],
+              error: null,
               multi: true
             }
           })
@@ -144,7 +144,7 @@ describe('Redis - Loader', () => {
         try {
           expect(callCount).toEqual(1)
           expect(lastBatch.error).toBeInstanceOf(Error)
-          expect(lastBatch.commands).toEqual([[ 'zadd', 'foo' ]])
+          expect(lastBatch.commands).toEqual([['zadd', 'foo']])
           expect(commandCount).toEqual(1)
           expect(responseCount).toEqual(0)
           expect(batchCount).toEqual(1)
@@ -184,7 +184,7 @@ describe('Redis - Loader', () => {
         redis.zadd('foo', '0', 'ghi')
       ])
       redis.resetStats()
-      expect(await collectItr(redis.zscanStream('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
+      expect(await collectItr(redis.zscanStream('foo'))).toEqual([['abc', '0', 'def', '0', 'ghi', '0']])
       const { batchCount } = redis.stats
       expect(batchCount).toEqual(1)
     })
@@ -198,7 +198,7 @@ describe('Redis - Loader', () => {
         redis.zadd('foo', '0', 'ghi')
       ])
       redis.resetStats()
-      expect(await collectItr(redis.zscanIterable('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
+      expect(await collectItr(redis.zscanIterable('foo'))).toEqual([['abc', '0', 'def', '0', 'ghi', '0']])
       const { batchCount } = redis.stats
       expect(batchCount).toEqual(1)
     })
@@ -210,7 +210,7 @@ describe('Redis - Loader', () => {
         redis.zadd('foo', '0', 'ghi')
       ])
       redis.resetStats()
-      expect(await collectItr(redis.zscanStream('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
+      expect(await collectItr(redis.zscanStream('foo'))).toEqual([['abc', '0', 'def', '0', 'ghi', '0']])
       const { batchCount } = redis.stats
       expect(batchCount).toEqual(1)
     })

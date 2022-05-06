@@ -21,7 +21,7 @@ export class RedisLoader implements EventEmitter {
   public stats: RedisStats
   public redis: Redis
   private logger: statsLogger | undefined
-  private dataLoader: DataLoader<{}, {}>
+  private dataLoader: DataLoader<unknown, unknown>
 
   constructor({ redis, logger, maxBatchSize = Infinity }: IRedisLoaderOptions) {
     if (!redis) { throw new Error('"redis" is required') }
@@ -157,8 +157,8 @@ export class RedisLoader implements EventEmitter {
   rpushxBuffer: (key: stringable, value: stringable) => Promise<number>
   lpushx: (key: stringable, value: stringable) => Promise<number>
   lpushxBuffer: (key: stringable, value: stringable) => Promise<number>
-  linsert: (key: stringable, direction: "BEFORE" | "AFTER", pivot: stringable, value: stringable) => Promise<number>
-  linsertBuffer: (key: stringable, direction: "BEFORE" | "AFTER", pivot: stringable, value: stringable) => Promise<number>
+  linsert: (key: stringable, direction: 'BEFORE' | 'AFTER', pivot: stringable, value: stringable) => Promise<number>
+  linsertBuffer: (key: stringable, direction: 'BEFORE' | 'AFTER', pivot: stringable, value: stringable) => Promise<number>
   rpop: (key: stringable) => Promise<string>
   rpopBuffer: (key: stringable) => Promise<string>
   lpop: (key: stringable) => Promise<string>
@@ -237,10 +237,10 @@ export class RedisLoader implements EventEmitter {
   zunionstoreBuffer: (destination: stringable, numkeys: stringable, key: stringable, ...args: stringable[]) => any
   zinterstore: (destination: stringable, numkeys: stringable, ...args: stringable[]) => any
   zinterstoreBuffer: (destination: stringable, numkeys: stringable, ...args: stringable[]) => any
-  zrange: (key: stringable, start: stringable, stop: stringable, withScores?: "WITHSCORES") => Promise<any>
-  zrangeBuffer: (key: stringable, start: stringable, stop: stringable, withScores?: "WITHSCORES") => Promise<any>
-  zrevrange: (key: stringable, start: stringable, stop: stringable, withScores?: "WITHSCORES") => Promise<any>
-  zrevrangeBuffer: (key: stringable, start: stringable, stop: stringable, withScores?: "WITHSCORES") => Promise<any>
+  zrange: (key: stringable, start: stringable, stop: stringable, withScores?: 'WITHSCORES') => Promise<any>
+  zrangeBuffer: (key: stringable, start: stringable, stop: stringable, withScores?: 'WITHSCORES') => Promise<any>
+  zrevrange: (key: stringable, start: stringable, stop: stringable, withScores?: 'WITHSCORES') => Promise<any>
+  zrevrangeBuffer: (key: stringable, start: stringable, stop: stringable, withScores?: 'WITHSCORES') => Promise<any>
   zrangebyscore: (key: stringable, min: stringable, max: stringable, ...args: (string | stringable)[]) => any
   zrangebyscoreBuffer: (key: stringable, min: stringable, max: stringable, ...args: (string | stringable)[]) => any
   zrevrangebyscore: (key: stringable, max: stringable, min: stringable, ...args: (string | stringable)[]) => any
@@ -338,16 +338,16 @@ export class RedisLoader implements EventEmitter {
   xlenBuffer: (key: stringable) => any
   xpending: (key: stringable, group: stringable, ...args: stringable[]) => any
   xpendingBuffer: (key: stringable, group: stringable, ...args: stringable[]) => any
-  xrange: (key: stringable, start: stringable, end: stringable, COUNT?: "COUNT", count?: stringable) => any
-  xrangeBuffer: (key: stringable, start: stringable, end: stringable, COUNT?: "COUNT", count?: stringable) => any
+  xrange: (key: stringable, start: stringable, end: stringable, COUNT?: 'COUNT', count?: stringable) => any
+  xrangeBuffer: (key: stringable, start: stringable, end: stringable, COUNT?: 'COUNT', count?: stringable) => any
   xread: (...args: stringable[]) => any
   xreadBuffer: (...args: stringable[]) => any
   xreadgroup: (...args: stringable[]) => any
   xreadgroupBuffer: (...args: stringable[]) => any
-  xrevrange: (key: stringable, start: stringable, end: stringable, COUNT?: "COUNT", count?: stringable) => any
-  xrevrangeBuffer: (key: stringable, start: stringable, end: stringable, COUNT?: "COUNT", count?: stringable) => any
-  xtrim: (key: stringable, MAXLEN: "MAXLEN", tilde?: "~", count?: stringable) => any
-  xtrimBuffer: (key: stringable, MAXLEN: "MAXLEN", tilde?: "~", count?: stringable) => any
+  xrevrange: (key: stringable, start: stringable, end: stringable, COUNT?: 'COUNT', count?: stringable) => any
+  xrevrangeBuffer: (key: stringable, start: stringable, end: stringable, COUNT?: 'COUNT', count?: stringable) => any
+  xtrim: (key: stringable, MAXLEN: 'MAXLEN', tilde?: '~', count?: stringable) => any
+  xtrimBuffer: (key: stringable, MAXLEN: 'MAXLEN', tilde?: '~', count?: stringable) => any
   // REDIS STREAMS END
 
   // KEY COMMANDS BEGIN
@@ -435,8 +435,8 @@ export class RedisLoader implements EventEmitter {
   bgsaveBuffer: () => Promise<string>
   bgrewriteaof: () => Promise<string>
   bgrewriteaofBuffer: () => Promise<string>
-  shutdown: (save: "SAVE" | "NOSAVE") => Promise<any>
-  shutdownBuffer: (save: "SAVE" | "NOSAVE") => Promise<any>
+  shutdown: (save: 'SAVE' | 'NOSAVE') => Promise<any>
+  shutdownBuffer: (save: 'SAVE' | 'NOSAVE') => Promise<any>
   lastsave: () => Promise<number>
   lastsaveBuffer: () => Promise<number>
   exec: () => Promise<any>
