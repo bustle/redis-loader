@@ -1,4 +1,3 @@
-import bluebird from 'bluebird'
 import { collect } from 'bluestream'
 import { collect as collectItr, flatten } from 'streaming-iterables'
 import redisLoader from '.'
@@ -18,11 +17,11 @@ describe('Redis - Loader', () => {
   })
 
   it('can batch commands to Redis', async () => {
-    await bluebird.join(
+    await Promise.all([
       redis.ping(),
       redis.dbsize(),
       redis.time()
-    )
+    ])
     const { batchCount, lastBatch, commandCount, responseCount, timeInRedis } = redis.stats
     if (!lastBatch) {
       throw new Error('expected lastBatch')
@@ -39,22 +38,22 @@ describe('Redis - Loader', () => {
 
   it('can set batch size', async () => {
     const batchRedis = redisLoader(redisUrl, { keyPrefix, maxBatchSize: 1 })
-    await bluebird.join(
+    await Promise.all([
       batchRedis.ping(),
       batchRedis.dbsize(),
       batchRedis.time()
-    )
+    ])
     expect(batchRedis.stats.lastBatch && batchRedis.stats.lastBatch.commandCount).toEqual(1)
     expect(batchRedis.stats.batchCount).toEqual(3)
     batchRedis.disconnect()
   })
 
   it('can reset batch command counts', async () => {
-    await bluebird.join(
+    await Promise.all([
       redis.ping(),
       redis.dbsize(),
       redis.time()
-    )
+    ])
     redis.resetStats()
     const { batchCount, lastBatch, commandCount, responseCount, timeInRedis, batches } = redis.stats
     expect(batchCount).toEqual(0)
@@ -100,11 +99,11 @@ describe('Redis - Loader', () => {
         }
       }
       const loggingRedis = redisLoader(redisUrl, { keyPrefix, logger })
-      bluebird.join(
+      Promise.all([
         loggingRedis.ping(),
         loggingRedis.ping(),
         loggingRedis.ping()
-      ).catch(done)
+      ]).catch(done)
     })
 
     it('converts to json nicely', done => {
@@ -131,11 +130,11 @@ describe('Redis - Loader', () => {
         }
       }
       const loggingRedis = redisLoader(redisUrl, { keyPrefix, logger })
-      bluebird.join(
+      Promise.all([
         loggingRedis.ping(),
         loggingRedis.ping(),
         loggingRedis.ping()
-      ).catch(done)
+      ]).catch(done)
     })
 
     it('logs errors and stats in the loader', done => {
@@ -166,11 +165,11 @@ describe('Redis - Loader', () => {
 
   describe('Buffers', () => {
     it('can batch buffer commands to redis', async () => {
-      const results = await bluebird.join(
+      const results = await Promise.all([
         redis.pingBuffer(),
         redis.pingBuffer(),
         redis.pingBuffer()
-      )
+      ])
       results.forEach(result => {
         expect(result).toBeInstanceOf(Buffer)
         expect(result.toString()).toEqual('PONG')
@@ -180,11 +179,11 @@ describe('Redis - Loader', () => {
 
   describe('Streams', () => {
     it('can handle streams', async () => {
-      await bluebird.join(
+      await Promise.all([
         redis.zadd('foo', '0', 'abc'),
         redis.zadd('foo', '0', 'def'),
         redis.zadd('foo', '0', 'ghi')
-      )
+      ])
       redis.resetStats()
       expect(await collect(redis.zscanStream('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
       const { batchCount } = redis.stats
