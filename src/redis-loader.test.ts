@@ -3,9 +3,9 @@ import { collect } from 'bluestream'
 import { collect as collectItr, flatten } from 'streaming-iterables'
 import redisLoader from '.'
 
-export const keyPrefix = '_test_'
-export const redisUrl = 'redis://localhost:6379/8'
-export const redis = redisLoader(redisUrl, { keyPrefix })
+const keyPrefix = '_test_'
+const redisUrl = 'redis://localhost:6379/8'
+const redis = redisLoader(redisUrl, { keyPrefix })
 
 describe('Redis - Loader', () => {
   beforeEach(async () => {
