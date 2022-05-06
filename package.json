@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "bluestream": "10",
-    "dataloader": "^1.4.0",
+    "dataloader": "^2.1.0",
     "redis-commands": "^1.4.0"
   },
   "peerDependencies": {
@@ -44,7 +44,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^26.1.5",
     "eslint-plugin-promise": "^6.0.0",
-    "ioredis": "^4.2.0",
+    "ioredis": "^4.28.5",
     "jest": "^28.1.0",
     "streaming-iterables": "^7.0.4",
     "ts-jest": "^28.0.1",

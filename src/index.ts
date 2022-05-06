@@ -1,8 +1,8 @@
-import Redis from 'ioredis'
+import Redis, { RedisOptions } from 'ioredis'
 import { RedisLoader, statsLogger } from './redis-loader'
 export { RedisLoader }
 
-export interface RedisLoaderHelperOptions extends Redis.RedisOptions {
+export interface RedisLoaderHelperOptions extends RedisOptions {
   logger?: statsLogger
   maxBatchSize?: number
 }
