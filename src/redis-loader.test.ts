@@ -158,7 +158,7 @@ describe('Redis - Loader', () => {
         }
       }
       const loggingRedis = redisLoader(redisUrl, { keyPrefix, logger })
-      expect(loggingRedis.zadd('foo')).rejects.toThrow('err').catch(done)
+      expect(loggingRedis.zadd('foo')).rejects.toThrow('ERR').catch(done)
     })
   })
 
