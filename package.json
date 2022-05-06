@@ -47,7 +47,7 @@
     "eslint-plugin-promise": "^6.0.0",
     "ioredis": "^4.2.0",
     "jest": "^28.1.0",
-    "streaming-iterables": "^3.0.7",
+    "streaming-iterables": "^7.0.4",
     "ts-jest": "^28.0.1",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4"
