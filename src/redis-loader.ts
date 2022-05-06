@@ -478,20 +478,20 @@ export class RedisLoader implements EventEmitter {
   // The proxied event emitter methods
   connect: () => Promise<any>
   disconnect: () => void
-  addListener: (event: stringable | symbol, listener: Function) => this
+  addListener: (event: stringable | symbol, listener: any) => this
   emit: (event: stringable | symbol, ...args: stringable[]) => boolean
   eventNames: () => (string | symbol)[]
   getMaxListeners: () => number
   listenerCount: (type: stringable | symbol) => number
-  listeners: (event: stringable | symbol) => Function[]
+  listeners: (event: stringable | symbol) => any[]
   off: (event: stringable | symbol, listener: (...args: stringable[]) => void) => this
-  on: (event: stringable | symbol, listener: Function) => this
-  once: (event: stringable | symbol, listener: Function) => this
-  prependListener: (event: stringable | symbol, listener: Function) => this
-  prependOnceListener: (event: stringable | symbol, listener: Function) => this
-  rawListeners: (event: stringable | symbol) => Function[]
+  on: (event: stringable | symbol, listener: any) => this
+  once: (event: stringable | symbol, listener: any) => this
+  prependListener: (event: stringable | symbol, listener: any) => this
+  prependOnceListener: (event: stringable | symbol, listener: any) => this
+  rawListeners: (event: stringable | symbol) => any[]
   removeAllListeners: (event?: stringable | symbol) => this
-  removeListener: (event: stringable | symbol, listener: Function) => this
+  removeListener: (event: stringable | symbol, listener: any) => this
   setMaxListeners: (n: stringable) => this
 }
 
