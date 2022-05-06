@@ -1,4 +1,3 @@
-import { collect } from 'bluestream'
 import { collect as collectItr, flatten } from 'streaming-iterables'
 import redisLoader from '.'
 
@@ -185,7 +184,7 @@ describe('Redis - Loader', () => {
         redis.zadd('foo', '0', 'ghi')
       ])
       redis.resetStats()
-      expect(await collect(redis.zscanStream('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
+      expect(await collectItr(redis.zscanStream('foo'))).toEqual([[ 'abc', '0', 'def', '0', 'ghi', '0' ]])
       const { batchCount } = redis.stats
       expect(batchCount).toEqual(1)
     })
