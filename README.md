@@ -1,5 +1,5 @@
 # RedisLoader
-An [`ioredis`](https://github.com/luin/ioredis)-like object that batches commands via [`dataloader`](https://github.com/facebook/dataloader). Under the hood we have `dataloader` utilize redis's `multi` transactions and [pipelining](https://redis.io/topics/pipelining) to group commands called. We also support batching in streams, using [`bluestream`](https://github.com/bustle/bluestream) to make sure promises/async functions play nice in them.
+An [`ioredis`](https://github.com/luin/ioredis)-like object that batches commands via [`dataloader`](https://github.com/facebook/dataloader). Under the hood we have `dataloader` utilize redis's `multi` transactions and [pipelining](https://redis.io/topics/pipelining) to group commands called. We also support batching in streams.
 
 ### Installation
 ```
