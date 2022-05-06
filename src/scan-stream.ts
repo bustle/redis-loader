@@ -23,7 +23,7 @@ export class ScanStream extends Readable {
   private _count: string | undefined
 
   constructor({ redis, command, key, match, count, ...opts }: ScanStreamConstructorOptions) {
-    super({ ...opts, objectMode: true })
+    super({ ...opts, objectMode: opts.objectMode ?? true })
     this._redis = redis
     this._command = command
     this._nextCursor = '0'
