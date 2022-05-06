@@ -34,7 +34,7 @@
     "ioredis": ">=3.0.0"
   },
   "devDependencies": {
-    "@types/ioredis": "^3.2.14",
+    "@types/ioredis": "^4.28.10",
     "@types/jest": "^27.5.0",
     "@types/node": "^17.0.31",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
