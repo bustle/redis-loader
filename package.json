@@ -1,6 +1,6 @@
 {
   "name": "redis-loader",
-  "version": "6.3.2",
+  "version": "7.0.0",
   "description": "An io-redis like object that batches queries with dataloader",
   "author": "Tristan Siegel <tristan.siegel@bustle.com>",
   "license": "MIT",
@@ -26,34 +26,28 @@
     "test": "jest --runInBand --bail --coverage"
   },
   "dependencies": {
-    "bluestream": "10",
-    "dataloader": "^1.4.0",
+    "dataloader": "^2.1.0",
     "redis-commands": "^1.4.0"
   },
   "peerDependencies": {
-    "ioredis": ">=3.0.0"
+    "ioredis": ">=4.0.0"
   },
   "devDependencies": {
-    "@types/ioredis": "^3.2.14",
-    "@types/jest": "^23.3.10",
-    "@types/node": "^10.5.7",
-    "bluebird": "^3.5.3",
-    "chai": "^4.1.2",
-    "eslint": "^5.3.0",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.13.0",
-    "eslint-plugin-jest": "^21.20.2",
-    "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-promise": "^3.8.0",
-    "eslint-plugin-standard": "^3.1.0",
-    "eslint-plugin-typescript": "^0.14.0",
-    "ioredis": "^4.2.0",
-    "jest": "^25.0.0",
-    "streaming-iterables": "^3.0.7",
-    "ts-jest": "^23.10.5",
-    "ts-node": "^7.0.1",
-    "tslint": "^5.11.0",
-    "typescript": "^3.1.6",
-    "typescript-eslint-parser": "^18.0.0"
+    "@types/ioredis": "^4.28.10",
+    "@types/jest": "^27.5.0",
+    "@types/node": "^17.0.31",
+    "@typescript-eslint/eslint-plugin": "^5.22.0",
+    "@typescript-eslint/parser": "^5.22.0",
+    "eslint": "^8.14.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.1.5",
+    "eslint-plugin-promise": "^6.0.0",
+    "ioredis": "^4.28.5",
+    "jest": "^28.1.0",
+    "streaming-iterables": "^7.0.4",
+    "ts-jest": "^28.0.1",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
   }
 }

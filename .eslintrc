@@ -6,12 +6,11 @@
     "standard",
     "plugin:import/errors",
     "plugin:import/warnings",
-    "plugin:jest/recommended"
+    "plugin:jest/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
-  "plugins": [
-    "jest",
-    "typescript"
-  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "jest"],
   "settings": {
     "import/resolver": {
       "node": {
@@ -43,15 +42,7 @@
     ],
     "no-return-await": "error",
     "space-before-function-paren": 0,
-    "no-eval": 0
-  },
-  "overrides": {
-    "files": ["**/*.ts"],
-    "parser": "typescript-eslint-parser",
-    "rules": {
-      "no-undef": 0,
-      "typescript/no-unused-vars": 2,
-      "typescript/class-name-casing": 2
-    }
+    "no-eval": 0,
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

@@ -1,4 +1,4 @@
-import { ReadStream, IReadableStreamOptions } from 'bluestream'
+import { Readable, ReadableOptions } from 'stream'
 import { RedisLoader } from './redis-loader'
 
 type ScanCommand = 'scan' | 'sscan' | 'hscan' | 'zscan' | 'scanBuffer' | 'sscanBuffer' | 'hscanBuffer' | 'zscanBuffer'
@@ -9,13 +9,12 @@ export interface ScanStreamOptions {
   count?: string | number
 }
 
-interface ScanStreamConstructorOptions extends IReadableStreamOptions, ScanStreamOptions {
+interface ScanStreamConstructorOptions extends ReadableOptions, ScanStreamOptions {
   redis: RedisLoader
   command: ScanCommand
 }
 
-// Bluestream based scan streams
-export class ScanStream extends ReadStream {
+export class ScanStream extends Readable {
   private _redis: RedisLoader
   private _command: ScanCommand
   private _nextCursor: string
@@ -24,7 +23,7 @@ export class ScanStream extends ReadStream {
   private _count: string | undefined
 
   constructor({ redis, command, key, match, count, ...opts }: ScanStreamConstructorOptions) {
-    super(opts)
+    super({ ...opts, objectMode: opts.objectMode ?? true })
     this._redis = redis
     this._command = command
     this._nextCursor = '0'

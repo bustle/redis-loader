@@ -1,7 +1,7 @@
 import { RedisLoader } from './redis-loader'
 
 if ((Symbol as any).asyncIterator === undefined) {
-  ;(Symbol as any).asyncIterator = Symbol.for('asyncIterator')
+  (Symbol as any).asyncIterator = Symbol.for('asyncIterator')
 }
 
 type ScanCommand = 'scan' | 'sscan' | 'hscan' | 'zscan' | 'scanBuffer' | 'sscanBuffer' | 'hscanBuffer' | 'zscanBuffer'
