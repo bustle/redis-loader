@@ -1,5 +1,5 @@
 {
-  "name": "redis-loader",
+  "name": "@bustle/redis-loader",
   "version": "7.0.0",
   "description": "An io-redis like object that batches queries with dataloader",
   "author": "Tristan Siegel <tristan.siegel@bustle.com>",

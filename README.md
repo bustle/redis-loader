@@ -3,11 +3,11 @@ An [`ioredis`](https://github.com/luin/ioredis)-like object that batches command
 
 ### Installation
 ```
-npm i --save redis-loader
+npm i --save @bustle/redis-loader
 
 or
 
-yarn add redis-loader
+yarn add @bustle/redis-loader
 ```
 
 ### Examples
