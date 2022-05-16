@@ -5,7 +5,7 @@
   "author": "Tristan Siegel <tristan.siegel@bustle.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=6"
+    "node": ">=12"
   },
   "keywords": [
     "async/await",
